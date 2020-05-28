@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Button/Dropdown</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="20" height="20"></rect>
+    </defs>
+    <g id="Button/Dropdown" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g>
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+            <path d="M4.86958744,6 L15.1304126,6 C15.4651461,5.99888466 15.7706081,6.18709322 15.9150971,6.48348367 C16.0595862,6.77987412 16.0172644,7.13144525 15.8063791,7.38661558 L10.6759665,13.6816576 C10.5114841,13.8829044 10.262844,14 10,14 C9.73715603,14 9.48851585,13.8829044 9.32403348,13.6816576 L4.19362092,7.38661558 C3.98273559,7.13144525 3.94041383,6.77987412 4.08490286,6.48348367 C4.22939189,6.18709322 4.53485386,5.99888466 4.86958744,6 Z" id="Path" fill="#9FB3C8" fill-rule="nonzero" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>

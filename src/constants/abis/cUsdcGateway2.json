@@ -1,0 +1,21 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "etherTocUSDC",
+    "outputs": [
+      {
+        "name": "outAmount",
+        "type": "uint256"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]

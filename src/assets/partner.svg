@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>icon/Parter</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="24" height="24"></rect>
+    </defs>
+    <g id="icon/Parter" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g>
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+            <path d="M20,3 L11.1206922,6.98457426 L6.09747429,6.98457426 C4.94083375,6.98457426 4,7.84024351 4,8.89218468 L4,11.8330841 C4,12.8850253 4.94083375,13.7406945 6.09747429,13.7406945 L6.60716054,13.7406945 L10.288694,20.0828633 L10.3129315,20.1222872 C10.6685699,20.6638367 11.3206514,21 12.0149154,21 C12.3712529,21 12.7219973,20.911826 13.0296268,20.7450161 C13.9574096,20.2407711 14.2678358,19.1496179 13.7313485,18.3005193 L11.1502899,13.7546837 L20,17.4751599 L20,3 Z M18.1355784,14.8231574 L12.5287966,12.4664107 L12.5287966,8.24338518 L18.1358115,5.72767095 L18.1358115,14.8231574 L18.1355784,14.8231574 Z" id="Shape" fill="#829AB1" fill-rule="nonzero" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>

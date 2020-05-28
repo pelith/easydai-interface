@@ -1,0 +1,126 @@
+{
+  "address": "Address",
+  "addressIsIncorrect": "Address format is incorrect",
+  "allOppertunities": "All Oppertunities",
+  "amount": "Amount",
+  "apr": "APR",
+  "assetBalance": "Balance",
+  "assetsOverview": "Overview",
+  "availableBalance": "Available Balance",
+  "balance": "Balance",
+  "cancel": "Cancel",
+  "cDaiMigrationMessage": "DAI migration tool has launched on EasyDAI",
+  "confirm": "Confirm",
+  "connect": "Connect",
+  "create": "Create",
+  "createAccount": "Create Account",
+  "createSuccess": "Success to Create",
+  "createSuccessMessage": "Keystore.json sent to registration mailbox",
+  "detectNoWallet": "No Wallet Detected",
+  "detectWallet": "Wallet Detected",
+  "easyDai": "EasyDAI",
+  "email": "Email",
+  "emailIsIncorrect": "Email format is incorrect",
+  "emailPlaceholder": "Do not use hotmail",
+  "emptyAddressError": "Please fill out address.",
+  "estimatedInterestMessage": "At the current profit rate, the interest you will get after one year is approximately",
+  "ether": "ETH",
+  "exchangeRate": "Exchange Rate",
+  "faq": [
+    {
+      "question": "What is EasyDAI？",
+      "answer": "EasyDAI is a decentralized exchange / lending platform through depositing Ethereum to earn high-yield interest on DAI. EasyDAI is aiming to make everyone easily participate in DeFi."
+    },
+    {
+      "question": "How EasyDAI Works？",
+      "answer": "When the user deposits Ethereum through EasyDAI, the smart contract will be automatically executed to convert Ethereum into stable coin DAI. Then DAI will be deposited into Compound, a transparent, autonomous money market, to earn interest."
+    },
+    {
+      "question": "What is Compound？",
+      "answer": "Compound is a Peer to Pool loaning platform based on the Ethereum blockchain — allowing users supply liquidity or borrow from a money market. Compound protocol is currently the largest decentralized loaning platform with $163,828,259 of assets earning interest across 7 markets (as of Sep. 2019) and continue growing."
+    },
+    {
+      "question": "What is the APR and how it is determined？",
+      "answer": "EasyDAI’s APR follows the real-time interest rate on Compound and renew in every 15 seconds. Interest rates are based on an algorithm taking account  of the liquidity available in each market, and fluctuate in real-time based on supply and demand. When liquidity is plentiful, interest rates are low. As liquidity becomes scarce, interest rates increase, incentivizing new supply and the repayment of borrowing."
+    },
+    {
+      "question": "Is EasyDAI safe？",
+      "answer": "EasyDAI is automatically driven by Ethereum Smart Contract, instead of centralized server or company controlled account.All deposited amounts are under your control, as long as the Ethereum blockchain and Compound are operational, users can withdraw or repay at any time."
+    },
+    {
+      "question": "What risk should I expect？",
+      "answer": "Price risk:/n DAI is a stable coin which pegged withUSD, but there is still possibility that exchange rate changes could vary within small price fluctuations (0.99~1.01) and the exchange rate of fiat against USD may also affect the profit. In addition, there is also a slight liquidity risk in the blockchain itself, such as a slippage loss when large deposit or withdraw happens in a short term./n/nSystemic risk:/nThere are platform risks for Compound: such as blockchain outages and smart contract vulnerabilities. However, the contained asset preservation risk is the most common and most likely to happen, such as the wallet's private key be stolen or hacked. Thismust be effectively prevented by learning the correct cybersecurity knowledge to manage and protect the private key./nAlthough EasyDAI exists the risk mentioned above, DeFi is still viewed as a new financial option with low volatility and high returns compared to direct investment in cryptocurrencies."
+    },
+    {
+      "question": "Why DeFi(Decentralized Finance)？",
+      "answer": "DeFi essentially transfer the centralized financial execution on blockchain. Through the characteristic of blockchain, DeFi has some good attributes that traditional finance doesn't have./n/nSmall Investment:/nThe minimum transaction amount on the blockchain can be as low as a few cent./n/nCensorship-resistance:/nWithout intermediate review time and consultant/handling fees, it is instant and unobstructed for anyone to access financial service./n/n24/7 Operation:/nOne of the huge difference from centralized finance is that the transactions on DeFi are free-restricted to open quotation or market close, because blockchain is operated by global nodes and is open 24/7 to anyone./n/n"
+    },
+    {
+      "question": "Well, where can I get start?",
+      "answer": "On EasyDAI, users can save their time from every processes to loan by our platform. Only prepare your ETH, the rest of transactions like exchange and loan will be automatically executed by EasyDAI’s smart contract."
+    },
+    {
+      "question": "How Can I Withdraw？",
+      "answer": "Click the button “Withdraw” and write down the withdrawal amount. After a pending time for the blockchain to confirm, the stable coin of DAI will be transferred into your wallet. Exchange DAI to ETH through Uniswap, Kyber Network.etc, and exchange ETH to fiat currency through Exchanges."
+    },
+    {
+      "question": "What is Trail Wallet？",
+      "answer": "EasyDAI does not host users’ asset. Therefore, users need to save their property into a secure cryptocurrency wallet. Although, there are many well-known and high-quality wallets, such as Metamask, TrustWallet, and imToken.etc, it takes time to install and learn how to use them. Consequently, EasyDAI provides our users “Trail Wallet” to easily get started to access DeFi./n/nCaution: Trail Wallet is only used to lower the entry barrier to experience DeFi, so the security of Trail Wallet can’t be guaranteed as Cryptocurrency Wallet. Please be sure to transfer your asset to a secure cryptocurrency wallet and continue to use EasyDAI."
+    }
+  ],
+  "fileIsIncorrect": "File Format is Incorrect",
+  "goTo": "Go to",
+  "holdingAssets": "Holding Assets",
+  "importKeystore": "Import Your Keystore file",
+  "insufficientBalance": "Insufficient Balance",
+  "insufficientGas": "Please keep some ETH to pay gas fee",
+  "interestAccrued": "Interest Accrued",
+  "keepPasswordWarning": "I will keep my password safe and understand that if I lose my password, I lose assets",
+  "lend": "Lend",
+  "lender": "Lender",
+  "lending": "Lending",
+  "lendingInstruction": "Enter the amount of ETH you want to lend and convert it to {{ token }} for lending",
+  "lendingPlatform": "Lending Platform",
+  "lendingNow": "Lending Now",
+  "loading": "Loading",
+  "login": "Login",
+  "loginWithBrowserWallet": "Login With Browser Wallet",
+  "loginWithTrialWallet": "Login With Trial Wallet",
+  "loginWithWalletConnect": "Login With Wallet Connect",
+  "loginWithCoolWallet": "Login With Cool Wallet",
+  "loggedIn": "Logged In",
+  "logout": "Logout",
+  "mainnet": "mainnet",
+  "noWalletError": "No wallet connected",
+  "oneClickToLend": "One-click to Lend",
+  "otherOppertunities": "Other Oppertunities",
+  "partnershipProgram": "Partnership Program",
+  "password": "Password",
+  "passwordConfirmed": "Confirm Password",
+  "passwordIsInconsistent": "Passwords are inconsistent",
+  "passwordIsIncorrect": "Password is incorrect",
+  "please": "Please",
+  "profit": "Profit",
+  "recoverAccount": "Recover Account",
+  "saiDisabled": "Supplying and Borrowing Sai in Compound and Fulcrum had already been disabled. withdrawing and repaying Sai will continue in perpetuity.",
+  "selectAssets": "Please select the asset to be loaned",
+  "selectLoginMode": "Select the login mode",
+  "selectToken": "Select Token",
+  "startNow": "Start Now",
+  "subscribe": "Subscribe",
+  "toAddress": "To Address",
+  "toDisplayContent": "to display content",
+  "toLend": "to lend",
+  "token": "Token",
+  "transfer": "Transfer",
+  "transferAmount": "Amount",
+  "transderConfirm": "Confirm",
+  "trialWalletAccount": "Trial Wallet Account",
+  "trialWalletMessage": "This is an trial wallet, the recommended deposit is less than NT$ 2000",
+  "trialWalletWarning": "I already know this is an trial wallet and will not put a large amount of funds",
+  "withdraw": "Withdraw",
+  "withdrawAmount": "Withdraw Amount",
+  "wrongAddressError": "It is not an address",
+  "wrongNetwork": "Wrong Network",
+  "your": "Your {{ something }}"
+}

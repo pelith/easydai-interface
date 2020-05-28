@@ -1,0 +1,126 @@
+{
+  "address": "地址",
+  "addressIsIncorrect": "地址格式不正確",
+  "allOppertunities": "所有投資機會",
+  "amount": "金額",
+  "apr": "年利率",
+  "assetBalance": "資產淨值",
+  "assetsOverview": "總覽",
+  "availableBalance": "可用餘額",
+  "balance": "餘額",
+  "cancel": "取消",
+  "cDaiMigrationMessage": "DAI Migration 已經可在 EasyDAI 上使用",
+  "confirm": "確認",
+  "connect": "Connect",
+  "create": "創建",
+  "createSuccess": "創建成功",
+  "createSuccessMessage": "已將 keystore.json 寄至註冊信箱",
+  "createAccount": "創建新帳戶",
+  "detectNoWallet": "未偵測到錢包",
+  "detectWallet": "偵測到錢包",
+  "easyDai": "輕鬆貸",
+  "email": "電子信箱",
+  "emailIsIncorrect": "Email 格式不正確",
+  "emailPlaceholder": "請勿使用 hotmail 信箱",
+  "emptyAddressError": "請輸入地址",
+  "estimatedInterestMessage": "依照當前利率，一年後你將獲得的利息約為",
+  "ether": "以太幣",
+  "exchangeRate": "匯率",
+  "faq": [
+    {
+      "question": "EasyDAI 是什麼？",
+      "answer": "EasyDAI 是一個去中心化的借貸平台，將以太幣存入即可享有高於銀行存款年利率的美元穩定幣活存。EasyDAI 旨在讓不熟悉加密貨幣技術與操作的人也能輕鬆享受去中心化金融帶來的益處。"
+    },
+    {
+      "question": "EasyDAI 如何幫您賺錢？",
+      "answer": "使用者將以太幣存入後，便會透過智慧合約自動執行，將以太幣兌換為美元穩定幣 DAI，隨後把 DAI 存入 Compound 借貸放款平台，經由智慧合約去中心化地放款給其他有融資需求的用戶來獲得利息。"
+    },
+    {
+      "question": "什麼是 Compound？",
+      "answer": "Compound 是基於以太坊區塊鏈的 Peer to Pool 借貸平台，亦即放款者將幣放入到資金池中，而借款者亦是跟資金池進行借貸。同時 Compound 不提供信用貸款服務，只支援抵押貸款，因此不會有信用違約的風險。比起「去中心化銀行」，Compound 更像是一間「去中心化當舖」。/n/n 截至 2019 年 9 月 3 日，Compound 平台上已有價值 $163,828,259 美金的加密貨幣資產存入平台，並持續增長中，是最具規模的去中心化借貸平台。"
+    },
+    {
+      "question": "放貸的年利率是如何決定的？",
+      "answer": "EasyDAI 上顯示的年利率是依據在 Compound 的即時利率決定，並且約每 15 秒會刷新一次。Compound 智慧合約會根據一套演算法，按照庫存資金與借出的金額比例來決定借貸者應支付的利息，系統賺取的利潤將按比例均分給放款者。"
+    },
+    {
+      "question": "EasyDAI 安全嗎？",
+      "answer": "EasyDAI 並不以中心化伺服器或公司控制的帳戶保管資金，而是由以太坊智慧合約自動完成兌換及存款。所有存入的金額都在用戶控制下。只要以太坊區塊鏈與 Compound 正常運行，用戶隨時可以將存入智慧合約中的錢提領出來。"
+    },
+    {
+      "question": "我有什麼風險？",
+      "answer": "任何投資標的都有其風險，使用 DeFi 與 EasyDAI 的風險大致可以分成兩個層面：價格風險 與 系統性風險。/n/n 價格風險：/n DAI 是對價 1 USD 的穩定幣，但仍有小的價格波動 (0.99~1.01) 匯率變化。同時臺幣對美金的匯差也可能影響獲利。另外區塊鏈本身也存在少許流動性風險，短期大額存提款可能有滑價損失。/n/n 系統性風險： /n Compound 存在平台風險：如區塊鏈停止運作及智慧合約程式碼漏洞等。然而，最常見也最有可能發生的是錢包私鑰遺失/被駭的資產保存風險，這部分必須透過學習正確知識並做好私鑰管理來達到有效防範。/n/n 整體來說，相較於低報酬的傳統金融儲蓄，使用 EasyDAI 仍存在小量額外風險，然而比起直接投資加密貨幣， DeFi 確實是低波動高報酬的新理財選擇。"
+    },
+    {
+      "question": "為什麼要使用 DeFi（去中心化金融）？",
+      "answer": "去中心化金融本質上是把中心化金融機構（銀行）的執行業務搬到區塊鏈上，透過區塊鏈的特性來實現傳統金融所無法做到的一些事，如：/n/n 接受銅板投資：/n 在區塊鏈上最小的交易金額可以低至數百分之一塊台幣。/n/n 免信用、免審核：/n 任何人皆能夠在區塊鏈上通行無阻地進行即時借款和槓桿交易等操作。大幅省去了中間洋蔥式的層層審核時間與各種中介機構收取的顧問/手續費。/n/n 24 小時全年無休： /n 區塊鏈與中心化金融機構最大的不同便是區塊鏈不像股市/銀行，會有開、收盤時間與營業時間的限制。區塊鏈是由全球的節點共同維護運作，因此全年不打烊，且對世上任何人都開放。"
+    },
+    {
+      "question": "我要怎麼開始投資？",
+      "answer": "EasyDAI 輕鬆貸讓想要進行放貸投資的用戶可以在同一個平台上完成所有流程，只要購買以太幣，後續兌幣與放貸的作業都將由鏈上的智慧合約來完成。/n/n 在台灣要取得以太幣相對容易許多，用戶可以透過交易所等管道將法幣兌換為以太幣再來進行投資。讓想要進行去中心化金融投資的用戶擁有更輕鬆簡單的操作介面。"
+    },
+    {
+      "question": "我要怎麼把錢提領出來？",
+      "answer": "按下「提領」按紐，填寫並確認要提領的金額，等待一段區塊鏈確認時間即可完成。這個動作會將您的美元穩定幣 DAI 提領至您的錢包中，接著便可至 Uniswap, Kyber Network 等去中心化交易所兌換成以太幣。隨後到各大交易所，例如：MaiCoin、BitoEX，將以太幣兌換為法幣退場。"
+    },
+    {
+      "question": "什麼是體驗錢包？",
+      "answer": "由於去中心化金融 (DeFi) 不會代管或經手您的資產，因此您會需要一個安全的加密貨幣錢包來管理您自己的資產。/n/n 這些錢包可以是瀏覽器上的擴充套件或是手機上的 App，例如：MetaMask、Trust Wallet、 imToken。不過這些錢包都有一定的使用門檻，用戶必須先花一些時間成本來安裝及學習如何使用錢包，才能夠使用 DeFi。因此 EasyDAI 開發了網頁版本的體驗錢包，讓用戶可以輕鬆開始享受去中心化金融服務的威力，同時學習加密貨幣知識。 /n/n 不過我們還是必須提醒您，體驗錢包是用來降低您使用 DeFi 的進入門檻，安全性並不及於正式的錢包。請您體驗完成後，一定要將資產轉移到安全的錢包上，再繼續使用 EasyDAI！"
+    }
+  ],
+  "fileIsIncorrect": "此檔案格式不正確",
+  "goTo": "點擊前往",
+  "holdingAssets": "正持有的資產",
+  "importKeystore": "匯入你的 Keystore 檔案",
+  "insufficientBalance": "餘額不足",
+  "insufficientGas": "請保留一些以太幣來付礦工費",
+  "interestAccrued": "累計利息",
+  "keepPasswordWarning": "我會妥善保管密碼，並了解如果遺失密碼，就等於遺失資產",
+  "lend": "放貸",
+  "lender": "放貸人",
+  "lendingInstruction": "輸入欲放貸的 ETH 金額，轉換為 {{ token }} 作為放貸使用",
+  "lendingPlatform": "放貸平台",
+  "lendingNow": "立即放貸",
+  "lending": "放貸中",
+  "loading": "處理中",
+  "login": "登入",
+  "loginWithBrowserWallet": "以瀏覽器錢包登入",
+  "loginWithTrialWallet": "以體驗錢包登入",
+  "loginWithWalletConnect": "以 Wallet Connect 登入",
+  "loginWithCoolWallet": "以 Cool Wallet 登入",
+  "loggedIn": "已登入",
+  "logout": "登出",
+  "mainnet": "以太坊主網",
+  "noWalletError": "未偵測到錢包",
+  "oneClickToLend": "一鍵放貸",
+  "otherOppertunities": "其他投資機會",
+  "partnershipProgram": "夥伴計畫",
+  "password": "密碼",
+  "passwordConfirmed": "確認密碼",
+  "passwordIsInconsistant": "密碼不一致",
+  "passwordIsIncorrect": "密碼不正確",
+  "please": "請",
+  "profit": "當前獲利",
+  "recoverAccount": "恢復已有帳戶",
+  "saiDisabled": "Compound 和 Fulcrum 已經關閉 Sai 的放貸與借貸的功能，不過你還是可以將放貸中的 Sai 領出來。",
+  "selectAssets": "請選擇欲放貸的資產",
+  "selectToken": "選擇代幣",
+  "selectLoginMode": "選擇登入方式",
+  "startNow": "立即開始",
+  "subscribe": "訂閱電子報",
+  "toAddress": "收款地址",
+  "toDisplayContent": "後即可顯示內容",
+  "toLend": "後操作",
+  "token": "代幣",
+  "transfer": "轉帳",
+  "transferAmount": "轉帳金額",
+  "transferConfirm": "確認轉帳",
+  "trialWalletAccount": "體驗錢包帳戶",
+  "trialWalletMessage": "此為體驗錢包，建議存入金額小於 2000 元",
+  "trialWalletWarning": "我已知曉此為體驗錢包，不會放入大額資金",
+  "withdraw": "提領",
+  "withdrawAmount": "提領金額",
+  "wrongAddressError": "此為錯誤地址",
+  "wrongNetwork": "此為錯誤網路",
+  "your": "你的{{ something }}"
+}
