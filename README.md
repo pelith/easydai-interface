@@ -1,30 +1,48 @@
-# EasyDAI - Make everyone easily participate in DeFi
+# EasyDAI: Lowering the barrier of DeFi
 
-https://easydai.app
+Check out the platform live at [easydai.app](https://easydai.app)
 
-EasyDAI is a decentralized exchange / lending platform through depositing Ethereum to earn high-yield interest on DAI. EasyDAI is aiming to make everyone easily participate in DeFi. When the user deposits Ethereum through EasyDAI, the smart contract will be automatically executed to convert Ethereum into stable coin DAI. Then DAI will be deposited into Compound, a transparent, autonomous money market, to earn interest.
+## What is EasyDAI?
 
-## Development
+EasyDAI is a decentralized exchange and lending platform, lowering the barrier of DeFi by helping users depositing ether into Compound in a simple, straightforward, and user-friendly interface.
 
-1. Copy `.env` file and set environment variables
+When users deposit Ether using EasyDAI, Ether will be converted into stable coin DAI automatically by our smart contract. After that, DAI will be deposited into Compound, a transparent, autonomous money market, to earn interest for the user.
+
+## FAQ
+
+Please refer to [easydai.app/faq](https://easydai.app/faq)
+
+## Technical Instruction
+
+### Dev
+
+Copy `.env.example` file and set environment variables, including `NETWORK_ID`, `NETWORK_URL` and `GA_TOKEN` (Google Analytic)
 
 ```
 cp .env.example .env.local
 ```
 
-2. Start development server
+Start development server
 
 ```bash
 npm install
 npm run start
 ```
 
-## Deployment
+### Build
 
-1. Build the website
+Build the website
 
 ```
 npm run build
 ```
 
-2. Put `build` folder to the server.
+Deploy to content of `build` folder to the server
+
+## License
+
+[BSD 3-Clause](https://github.com/pelith/easydai/blob/master/LICENSE.md)
+
+Copyright (c) 2019-present Pelith
+
+
