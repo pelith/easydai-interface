@@ -1,5 +1,7 @@
 # EasyDAI: Lowering the barrier of DeFi
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c06c4d19-f079-4cf1-8243-54fde188d023/deploy-status)](https://app.netlify.com/sites/easydai/deploys)
+
 Check out the platform live at [easydai.app](https://easydai.app)
 
 ## What is EasyDAI?
