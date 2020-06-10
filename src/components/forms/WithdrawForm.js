@@ -24,12 +24,14 @@ const WITHDRAW_METHODS = {
   Compound: 'redeem',
   Fulcrum: 'burn',
   MakerDAO: 'exit',
+  AAVE: 'redeem',
 }
 
 const WITHDRAW_GASES = {
   Compound: '950000',
   Fulcrum: '600000',
   MakerDAO: '400000',
+  AAVE: '600000',
 }
 
 const BalanceWrapper = styled.div`
@@ -75,10 +77,16 @@ export default function WithdrawForm(props) {
   const bond = useBondDetails(tokenAddress) || {}
   const balance = useTokenBalance(tokenAddress, account)
   const exchangeRate = useBondExchangeRate(tokenAddress)
-  const balanceComputed = useMemo(
-    () => (balance && exchangeRate ? balance.times(exchangeRate) : null),
-    [balance, exchangeRate],
-  )
+  const balanceComputed = useMemo(() => {
+    if (balance) {
+      if (bond.platform === 'AAVE') {
+        return balance
+      } else if (exchangeRate) {
+        return balance.times(exchangeRate)
+      }
+    }
+    return null
+  }, [balance, exchangeRate, bond.platform])
 
   const decimalsExp = useMemo(() => new BigNumber(10).pow(bond.assetDecimals), [
     bond,
@@ -87,7 +95,12 @@ export default function WithdrawForm(props) {
   const [amount, setAmount] = useState('')
   const cTokenAmount = useMemo(() => {
     if (amount) {
-      let value = new BigNumber(amount).times(decimalsExp).idiv(exchangeRate)
+      let value
+      if (bond.platform === 'AAVE') {
+        value = new BigNumber(amount).times(decimalsExp)
+      } else {
+        value = new BigNumber(amount).times(decimalsExp).idiv(exchangeRate)
+      }
       if (
         amount.toString() ===
         amountFormatter(balanceComputed, bond.assetDecimals)
@@ -142,6 +155,10 @@ export default function WithdrawForm(props) {
       } else if (bond.platform === 'MakerDAO') {
         withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
           account,
+          amount.toFixed(0),
+        )
+      } else if (bond.platform === 'AAVE') {
+        withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
           amount.toFixed(0),
         )
       }

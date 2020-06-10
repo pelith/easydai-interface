@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
+  useState,
 } from 'react'
 import BigNumber from 'bignumber.js'
 
@@ -19,6 +20,7 @@ import {
   CUSDC_CREATION_BLOCK_NUMBER,
   ISAI_CREATION_BLOCK_NUMBER,
   CHAI_CREATION_BLOCK_NUMBER,
+  ADAI_CREATETION_BLOCK_NUMBER,
   POT_ADDRESS,
 } from '../constants'
 import POT_ABI from '../constants/abis/pot.json'
@@ -132,18 +134,21 @@ const CREATION_BLOCK_NUMBER = {
   cUSDC: CUSDC_CREATION_BLOCK_NUMBER,
   iSAI: ISAI_CREATION_BLOCK_NUMBER,
   CHAI: CHAI_CREATION_BLOCK_NUMBER,
+  aDAI: ADAI_CREATETION_BLOCK_NUMBER,
 }
 
 const TRANSFER_TO = {
   Compound: 'to',
   Fulcrum: 'to',
   MakerDAO: 'dst',
+  AAVE: 'to',
 }
 
 const TRANSFER_FROM = {
   Compound: 'from',
   Fulcrum: 'from',
   MakerDAO: 'src',
+  AAVE: 'from',
 }
 
 async function getBondPastTransferEvents(bond, account, library, blockNumber) {
@@ -229,11 +234,10 @@ async function getBondPastEventsAndExchangeRates(
     blockNumber,
   )
 
-  const newExchangeRates = await getBondPastExchangeRates(
-    bond,
-    newTransferEvents,
-    library,
-  )
+  const newExchangeRates =
+    bond.platform !== 'AAVE'
+      ? await getBondPastExchangeRates(bond, newTransferEvents, library)
+      : []
 
   return { newTransferEvents, newExchangeRates }
 }
@@ -278,6 +282,10 @@ function calculateEarned(
   }, new BigNumber(0))
 
   return earned
+}
+
+function calculateAaveEarned(address, transferEvents) {
+  return null
 }
 
 export function useBondEarned(tokenAddress, address) {
@@ -339,7 +347,9 @@ export function useBondEarned(tokenAddress, address) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, bond, globalBlockNumber, library, update])
 
-  return calculateEarned(address, transferEvents, exchangeRates, bond.platform)
+  return bond.platform === 'AAVE'
+    ? calculateAaveEarned(address, transferEvents)
+    : calculateEarned(address, transferEvents, exchangeRates, bond.platform)
 }
 
 export function useAllBondEarned(address) {
@@ -401,18 +411,24 @@ export function useAllBondEarned(address) {
 
     return {
       ...earnings,
-      [tokenAddress]: calculateEarned(
-        address,
-        allLogs[tokenAddress].transferEvents,
-        allLogs[tokenAddress].exchangeRates,
-        bond.platform,
-      ),
+      [tokenAddress]:
+        bond.platform === 'AAVE'
+          ? calculateAaveEarned(address, allLogs[tokenAddress].transferEvents)
+          : calculateEarned(
+              address,
+              allLogs[tokenAddress].transferEvents,
+              allLogs[tokenAddress].exchangeRates,
+              bond.platform,
+            ),
     }
   }, {})
 }
 
 export function useBondProfit(tokenAddress, address) {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3ReadOnly()
+
+  const globalBlockNumber = useBlockNumber()
+  const bond = useBondDetails(tokenAddress)
 
   const [state] = useBondEarnedContext()
   const { exchangeRates = [] } =
@@ -420,13 +436,47 @@ export function useBondProfit(tokenAddress, address) {
 
   const balance = useTokenBalance(tokenAddress, address)
 
-  if ((exchangeRates || []).length > 1) {
-    return balance.times(
-      exchangeRates[exchangeRates.length - 1].minus(
-        exchangeRates[exchangeRates.length - 2],
-      ),
-    )
+  // calculate AAVE profit
+  const [principalBalance, setPrincipalBalance] = useState(0)
+  useEffect(() => {
+    let stale = false
+    if (bond.platform === 'AAVE' && library) {
+      const contract = getContract(bond.address, bond.abi, library)
+      contract.methods
+        .principalBalanceOf(address)
+        .call()
+        .then(value => {
+          if (!stale) {
+            setPrincipalBalance(new BigNumber(value))
+          }
+        })
+        .catch(() => {
+          if (!stale) {
+            setPrincipalBalance(null)
+          }
+        })
+    }
+
+    return () => {
+      stale = true
+    }
+  }, [address, bond, library, globalBlockNumber])
+
+  if (bond.platform === 'AAVE') {
+    if (balance && principalBalance) {
+      return balance.minus(principalBalance)
+    } else {
+      return null
+    }
   } else {
-    return null
+    if ((exchangeRates || []).length > 1) {
+      return balance.times(
+        exchangeRates[exchangeRates.length - 1].minus(
+          exchangeRates[exchangeRates.length - 2],
+        ),
+      )
+    } else {
+      return null
+    }
   }
 }

@@ -35,6 +35,7 @@ import CHAI_GATEWAY_1_ABI from '../constants/abis/chaiGateway1.json'
 import CHAI_GATEWAY_2_ABI from '../constants/abis/chaiGateway2.json'
 import CHAI_GATEWAY_3_ABI from '../constants/abis/chaiGateway3.json'
 // import CHAI_GATEWAY_4_ABI from '../constants/abis/chaiGateway4.json'
+import ADAI_GATEWAY_1_ABI from '../constants/abis/aDaiGateway1.json'
 
 const GatewaysContext = createContext()
 
@@ -301,6 +302,16 @@ const GATEWAYS_CONTEXTS = {
     //     fallback: 650000,
     //   },
     // },
+    '0xE37B49C50C1B95C63336725688DEE33fdDa58f50': {
+      [TARGET_ADDRESS]: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+      [TARGET_SYMBOL]: 'aDAI',
+      [ISREFERRAL]: false,
+      [ABI]: ADAI_GATEWAY_1_ABI,
+      [METHOD_NAMES]: ['etherToaDai'],
+      [GASES]: {
+        fallback: 300000,
+      },
+    },
   },
 }
 
@@ -348,6 +359,7 @@ export function useGatewaySwap(targetAddress) {
               .call({ value: amount }),
           ),
         )
+
         const maxAmount = BigNumber.maximum(
           ...estimatedAmounts.map(amount => new BigNumber(amount)),
         )

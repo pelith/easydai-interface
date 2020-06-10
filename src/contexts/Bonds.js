@@ -5,6 +5,7 @@ import { safeAccess } from '../utils'
 import CTOKEN_ABI from '../constants/abis/cToken.json'
 import ITOKEN_ABI from '../constants/abis/iToken.json'
 import CHAI_ABI from '../constants/abis/chai.json'
+import ATOKEN_ABI from '../constants/abis/aToken.json'
 
 const NAME = 'name'
 const SYMBOL = 'symbol'
@@ -66,6 +67,16 @@ const INITIAL_BONDS_CONTEXT = {
       [ASSET]: 'DAI',
       [ASSET_DECIMALS]: 18,
       [PLATFORM]: 'MakerDAO',
+    },
+    '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d': {
+      [NAME]: 'Aave Interest bearing DAI',
+      [SYMBOL]: 'aDAI',
+      [DECIMALS]: 18,
+      [ADDRESS]: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+      [ABI]: ATOKEN_ABI,
+      [ASSET]: 'DAI',
+      [ASSET_DECIMALS]: 18,
+      [PLATFORM]: 'AAVE',
     },
   },
 }

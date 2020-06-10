@@ -12,8 +12,14 @@ import { useWeb3ReadOnly } from './Web3ReadOnly'
 import { useBlockNumber } from './Application'
 import { useBondDetails, useAllBondDetails } from './Bonds'
 import { safeAccess, isAddress, getContract } from '../utils'
-import { BLOCKS_PER_YEAR, POT_ADDRESS } from '../constants'
+import {
+  BLOCKS_PER_YEAR,
+  POT_ADDRESS,
+  LENDING_POOL_ADDRESS,
+  AAVE_DAI_RESERVE_ADDRESS,
+} from '../constants'
 import POT_ABI from '../constants/abis/pot.json'
+import LENDING_POOL_ABI from '../constants/abis/LendingPool.json'
 
 const BondAPRContext = createContext()
 
@@ -109,6 +115,14 @@ async function getBondAPR(bond, library) {
             .minus(1)
             .times(60 * 60 * 24 * 365)
             .times(1e18),
+        )
+    }
+    case 'AAVE': {
+      return getContract(LENDING_POOL_ADDRESS, LENDING_POOL_ABI, library)
+        .methods.getReserveData(AAVE_DAI_RESERVE_ADDRESS)
+        .call()
+        .then(result =>
+          new BigNumber(result.liquidityRate).div(1e27).times(1e18),
         )
     }
     default: {

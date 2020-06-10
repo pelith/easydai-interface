@@ -87,7 +87,7 @@ export default function Provider({ children }) {
   )
 }
 
-function getBondExchangeRate(bond, library) {
+async function getBondExchangeRate(bond, library) {
   switch (bond.platform) {
     case 'Compound': {
       return getContract(bond.address, bond.abi, library)

@@ -197,10 +197,16 @@ export default function AssetDashboard() {
   const bond = useBondByAssetAndPlatform(asset, platform)
   const balance = useTokenBalance(bond.address, account)
   const exchangeRate = useBondExchangeRate(bond.address)
-  const balanceComputed = useMemo(
-    () => (balance && exchangeRate ? balance.times(exchangeRate) : null),
-    [balance, exchangeRate],
-  )
+  const balanceComputed = useMemo(() => {
+    if (balance) {
+      if (bond.platform === 'AAVE') {
+        return balance
+      } else if (exchangeRate) {
+        return balance.times(exchangeRate)
+      }
+    }
+    return null
+  }, [balance, exchangeRate, bond.platform])
   const earned = useBondEarned(bond.address, account)
   const profit = useBondProfit(bond.address, account)
   const apr = useBondAPR(bond.address)
@@ -257,13 +263,15 @@ export default function AssetDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weiAmount, call])
 
-  const outputAmountComputed = useMemo(
-    () =>
-      outputAmount && exchangeRate && calculatedAsset === bond.address
+  const outputAmountComputed = useMemo(() => {
+    if (bond.platform === 'AAVE') {
+      return outputAmount
+    } else {
+      return outputAmount && exchangeRate && calculatedAsset === bond.address
         ? outputAmount.times(exchangeRate)
-        : null,
-    [outputAmount, exchangeRate, calculatedAsset, bond],
-  )
+        : null
+    }
+  }, [outputAmount, exchangeRate, calculatedAsset, bond])
 
   const rate = useMemo(
     () =>

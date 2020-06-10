@@ -66,10 +66,14 @@ export default function AssetOverview() {
       apr:
         allAPRs && allAPRs[tokenAddress] ? allAPRs[tokenAddress].value : null,
       balance:
-        allBalances &&
-        allBalances[tokenAddress] &&
-        allExchangeRates &&
-        allExchangeRates[tokenAddress]
+        allBonds[tokenAddress].platform === 'AAVE'
+          ? allBalances && allBalances[tokenAddress]
+            ? allBalances[tokenAddress].value
+            : null
+          : allBalances &&
+            allBalances[tokenAddress] &&
+            allExchangeRates &&
+            allExchangeRates[tokenAddress]
           ? allBalances[tokenAddress].value.times(
               allExchangeRates[tokenAddress].value,
             )
@@ -316,12 +320,12 @@ function TableRow(props) {
       </td>
       <td>
         <TokenValue>
-          {balance ? amountFormatter(balance, tokenDecimals, 6) : 0}
+          {balance ? amountFormatter(balance, tokenDecimals, 6) : '-'}
         </TokenValue>
       </td>
       <td>
         <TokenValue>
-          {earned ? amountFormatter(earned, tokenDecimals, 6) : 0}
+          {earned ? amountFormatter(earned, tokenDecimals, 6) : '-'}
         </TokenValue>
       </td>
       <td>
