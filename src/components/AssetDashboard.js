@@ -65,10 +65,10 @@ const SubTitle = styled.h2`
   font-weight: 400;
   font-family: ${({ theme }) => theme.fontFamilies.notoSans};
   color: ${({ theme }) => theme.colors.blueGray500};
-
-  ${({ theme }) => theme.mediaQuery.md`
+  text-align: ${({ textAlign }) => textAlign || 'left'}
+    ${({ theme }) => theme.mediaQuery.md`
     font-size: 14px;
-  `}
+  `};
 `
 
 const ContextInfo = styled.div`
@@ -320,6 +320,9 @@ export default function AssetDashboard() {
         earned={earned}
         isBlock={!account}
       />
+      {bond.platform === 'AAVE' && (
+        <SubTitle textAlign='right'>{t('notSupportEarnedInAAVE')}</SubTitle>
+      )}
       <Header>
         <TitleWrapper>
           <Title>{t('lendingNow')}</Title>

@@ -91,6 +91,7 @@
   "loggedIn": "Logged In",
   "logout": "Logout",
   "mainnet": "mainnet",
+  "notSupportEarnedInAAVE": "Accrued interest can not be calculated in AAVE",
   "noWalletError": "No wallet connected",
   "oneClickToLend": "One-click to Lend",
   "otherOppertunities": "Other Oppertunities",
