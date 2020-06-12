@@ -115,7 +115,7 @@
   "token": "Token",
   "transfer": "Transfer",
   "transferAmount": "Amount",
-  "transderConfirm": "Confirm",
+  "transferConfirm": "Confirm",
   "trialWalletAccount": "Trial Wallet Account",
   "trialWalletMessage": "This is an trial wallet, the recommended deposit is less than NT$ 2000",
   "trialWalletWarning": "I already know this is an trial wallet and will not put a large amount of funds",
