@@ -36,6 +36,10 @@ import CHAI_GATEWAY_2_ABI from '../constants/abis/chaiGateway2.json'
 import CHAI_GATEWAY_3_ABI from '../constants/abis/chaiGateway3.json'
 // import CHAI_GATEWAY_4_ABI from '../constants/abis/chaiGateway4.json'
 import ADAI_GATEWAY_1_ABI from '../constants/abis/aDaiGateway1.json'
+import ADAI_GATEWAY_2_ABI from '../constants/abis/aDaiGateway2.json'
+import ADAI_GATEWAY_3_ABI from '../constants/abis/aDaiGateway3.json'
+import ADAI_GATEWAY_4_ABI from '../constants/abis/aDaiGateway4.json'
+import AUSDT_GATEWAY_1_ABI from '../constants/abis/aUSDTGateway1.json'
 
 const GatewaysContext = createContext()
 
@@ -310,6 +314,46 @@ const GATEWAYS_CONTEXTS = {
       [METHOD_NAMES]: ['etherToaDai'],
       [GASES]: {
         fallback: 300000,
+      },
+    },
+    '0x1dd0339e916771243d7287890cc5aa51278f6b24': {
+      [TARGET_ADDRESS]: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+      [TARGET_SYMBOL]: 'aDAI',
+      [ISREFERRAL]: false,
+      [ABI]: ADAI_GATEWAY_2_ABI,
+      [METHOD_NAMES]: ['etherToaDai'],
+      [GASES]: {
+        fallback: 450000,
+      },
+    },
+    '0x79143db86c2C9Ea72e366B5cB9Ea0e849E7c6EcA': {
+      [TARGET_ADDRESS]: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+      [TARGET_SYMBOL]: 'aDAI',
+      [ISREFERRAL]: false,
+      [ABI]: ADAI_GATEWAY_3_ABI,
+      [METHOD_NAMES]: ['etherToaDai'],
+      [GASES]: {
+        fallback: 800000,
+      },
+    },
+    '0x1F8EACee9062a4bdD4FDaF5CB04F2F8336DC37ff': {
+      [TARGET_ADDRESS]: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+      [TARGET_SYMBOL]: 'aDAI',
+      [ISREFERRAL]: false,
+      [ABI]: ADAI_GATEWAY_4_ABI,
+      [METHOD_NAMES]: ['etherToaDai'],
+      [GASES]: {
+        fallback: 650000,
+      },
+    },
+    '0xbb4f27D0612419ea9B7D1851b7474e78188137DA': {
+      [TARGET_ADDRESS]: '0x71fc860F7D3A592A4a98740e39dB31d25db65ae8',
+      [TARGET_SYMBOL]: 'aUSDT',
+      [ISREFERRAL]: false,
+      [ABI]: AUSDT_GATEWAY_1_ABI,
+      [METHOD_NAMES]: ['etherToaUSDT'],
+      [GASES]: {
+        fallback: 800000,
       },
     },
   },

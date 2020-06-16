@@ -78,6 +78,16 @@ const INITIAL_BONDS_CONTEXT = {
       [ASSET_DECIMALS]: 18,
       [PLATFORM]: 'AAVE',
     },
+    '0x71fc860F7D3A592A4a98740e39dB31d25db65ae8': {
+      [NAME]: 'Aave Interest bearing USDT',
+      [SYMBOL]: 'aUSDT',
+      [DECIMALS]: 6,
+      [ADDRESS]: '0x71fc860F7D3A592A4a98740e39dB31d25db65ae8',
+      [ABI]: ATOKEN_ABI,
+      [ASSET]: 'USDT',
+      [ASSET_DECIMALS]: 6,
+      [PLATFORM]: 'AAVE',
+    },
   },
 }
 
