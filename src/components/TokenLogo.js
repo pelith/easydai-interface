@@ -7,6 +7,8 @@ import SaiImage from '../assets/tokens/SAI.png'
 import SaiInactiveImage from '../assets/tokens/SAI_inactive.png'
 import UsdcImage from '../assets/tokens/USDC.png'
 import UsdcInactiveImage from '../assets/tokens/USDC_inactive.png'
+import UsdtImage from '../assets/tokens/USDT.png'
+import UsdtInactiveImage from '../assets/tokens/USDT_inactive.png'
 
 export default function TokenLogo(props) {
   const { name, isActive = true, ...otherProps } = props
@@ -26,6 +28,9 @@ export default function TokenLogo(props) {
       }
       case 'USDC': {
         return isActive ? UsdcImage : UsdcInactiveImage
+      }
+      case 'USDT': {
+        return isActive ? UsdtImage : UsdtInactiveImage
       }
       default: {
         return EtherImage
