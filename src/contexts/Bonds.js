@@ -15,6 +15,7 @@ const ABI = 'abi'
 const ASSET = 'asset'
 const ASSET_DECIMALS = 'assetDecimals'
 const PLATFORM = 'platform'
+const RESERVE = 'reserve'
 
 const INITIAL_BONDS_CONTEXT = {
   1: {
@@ -77,6 +78,7 @@ const INITIAL_BONDS_CONTEXT = {
       [ASSET]: 'DAI',
       [ASSET_DECIMALS]: 18,
       [PLATFORM]: 'AAVE',
+      [RESERVE]: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
     },
     '0x71fc860F7D3A592A4a98740e39dB31d25db65ae8': {
       [NAME]: 'Aave Interest bearing USDT',
@@ -87,6 +89,7 @@ const INITIAL_BONDS_CONTEXT = {
       [ASSET]: 'USDT',
       [ASSET_DECIMALS]: 6,
       [PLATFORM]: 'AAVE',
+      [RESERVE]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     },
   },
 }

@@ -16,7 +16,6 @@ import {
   BLOCKS_PER_YEAR,
   POT_ADDRESS,
   LENDING_POOL_ADDRESS,
-  AAVE_DAI_RESERVE_ADDRESS,
 } from '../constants'
 import POT_ABI from '../constants/abis/pot.json'
 import LENDING_POOL_ABI from '../constants/abis/LendingPool.json'
@@ -119,7 +118,7 @@ async function getBondAPR(bond, library) {
     }
     case 'AAVE': {
       return getContract(LENDING_POOL_ADDRESS, LENDING_POOL_ABI, library)
-        .methods.getReserveData(AAVE_DAI_RESERVE_ADDRESS)
+        .methods.getReserveData(bond.reserve)
         .call()
         .then(result =>
           new BigNumber(result.liquidityRate).div(1e27).times(1e18),
