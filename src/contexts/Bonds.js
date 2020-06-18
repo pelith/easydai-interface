@@ -49,6 +49,16 @@ const INITIAL_BONDS_CONTEXT = {
       [ASSET_DECIMALS]: 6,
       [PLATFORM]: 'Compound',
     },
+    '0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9': {
+      [NAME]: 'Compound USDT',
+      [SYMBOL]: 'cUSDT',
+      [DECIMALS]: 8,
+      [ADDRESS]: '0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9',
+      [ABI]: CTOKEN_ABI,
+      [ASSET]: 'USDT',
+      [ASSET_DECIMALS]: 6,
+      [PLATFORM]: 'Compound',
+    },
     '0x14094949152eddbfcd073717200da82fed8dc960': {
       [NAME]: 'Fulcrum Sai',
       [SYMBOL]: 'iSAI',

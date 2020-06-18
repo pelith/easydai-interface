@@ -26,6 +26,7 @@ import CUSDC_GATEWAY_1_ABI from '../constants/abis/cUsdcGateway1.json'
 import CUSDC_GATEWAY_2_ABI from '../constants/abis/cUsdcGateway2.json'
 import CUSDC_GATEWAY_3_ABI from '../constants/abis/cUsdcGateway3.json'
 import CUSDC_REFERRAL_GATEWAY_ABI from '../constants/abis/cUsdcReferralGateway.json'
+import CUSDT_GATEWAY_1_ABI from '../constants/abis/cUsdtGateway1.json'
 import ISAI_GATEWAY_1_ABI from '../constants/abis/iSaiGateway1.json'
 import ISAI_GATEWAY_2_ABI from '../constants/abis/iSaiGateway2.json'
 import ISAI_GATEWAY_3_ABI from '../constants/abis/iSaiGateway3.json'
@@ -39,7 +40,7 @@ import ADAI_GATEWAY_1_ABI from '../constants/abis/aDaiGateway1.json'
 import ADAI_GATEWAY_2_ABI from '../constants/abis/aDaiGateway2.json'
 import ADAI_GATEWAY_3_ABI from '../constants/abis/aDaiGateway3.json'
 import ADAI_GATEWAY_4_ABI from '../constants/abis/aDaiGateway4.json'
-import AUSDT_GATEWAY_1_ABI from '../constants/abis/aUSDTGateway1.json'
+import AUSDT_GATEWAY_1_ABI from '../constants/abis/aUsdtGateway1.json'
 
 const GatewaysContext = createContext()
 
@@ -352,6 +353,16 @@ const GATEWAYS_CONTEXTS = {
       [ISREFERRAL]: false,
       [ABI]: AUSDT_GATEWAY_1_ABI,
       [METHOD_NAMES]: ['etherToaUSDT'],
+      [GASES]: {
+        fallback: 800000,
+      },
+    },
+    '0x4b845B1e441B986D4593e14eb1Fc1155dfc071D9': {
+      [TARGET_ADDRESS]: '0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9',
+      [TARGET_SYMBOL]: 'cUSDT',
+      [ISREFERRAL]: false,
+      [ABI]: CUSDT_GATEWAY_1_ABI,
+      [METHOD_NAMES]: ['etherTocUSDT'],
       [GASES]: {
         fallback: 800000,
       },
