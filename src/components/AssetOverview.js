@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMediaQuery } from 'react-responsive'
 import useCollapse from 'react-collapsed'
@@ -13,6 +13,7 @@ import { useAllBondExchangeRates } from '../contexts/BondExchangeRates'
 import { useAllBondEarned } from '../contexts/BondEarned'
 import TokenLogo from './TokenLogo'
 import Subscribe from './Subscribe'
+import { ReactComponent as ArrowDownwardIcon } from '../assets/arrow_downward.svg'
 import { ReactComponent as DropdownIcon } from '../assets/dropdown.svg'
 import { amountFormatter, percentageFormatter } from '../utils'
 
@@ -155,10 +156,81 @@ const Table = styled.table`
   }
 `
 
+const StyledArrowDownwardIcon = styled(ArrowDownwardIcon)`
+  width: 18px;
+  height: 18px;
+  color: ${({ theme }) => theme.colors.blueGray400};
+  opacity: ${({ active }) => (active ? 1 : 0)};
+  transform: rotate(
+    ${({ direction }) => (direction === 'asc' ? '180deg' : '0deg')}
+  );
+  transition: all 0.3s;
+`
+
+const SortButton = styled.button.attrs({ type: 'button' })`
+  border: 0;
+  background-color: transparent;
+  padding: 0;
+  color: ${({ theme }) => theme.colors.blueGray400};
+  font-size: 12px;
+  font-weight: 500;
+  font-family: ${({ theme }) => theme.fontFamilies.notoSans};
+  letter-spacing: 1px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    ${StyledArrowDownwardIcon} {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+`
+
+function TableSortLabel(props) {
+  const {
+    children = '',
+    active = false,
+    direction = 'asc',
+    onClick = () => {},
+  } = props
+
+  return (
+    <SortButton onClick={onClick}>
+      {children}
+      <StyledArrowDownwardIcon active={active} direction={direction} />
+    </SortButton>
+  )
+}
+
 function AssetTable(props) {
   const { assets } = props
   const { t } = useTranslation()
   const isDesktopOrTablet = useMediaQuery({ minDeviceWidth: 768 })
+
+  const [order, setOrder] = useState('desc')
+  const [orderBy, setOrderBy] = useState('apr')
+
+  const handleRequestSort = property => {
+    const isDesc = orderBy === property && order === 'desc'
+    setOrder(isDesc ? 'asc' : 'desc')
+    setOrderBy(property)
+  }
+
+  const headCells = [
+    { id: 'apr', label: t('apr') },
+    { id: 'balance', label: t('balance') },
+    { id: 'earned', label: t('interestAccrued') },
+  ]
+
+  const rows = assets.sort((a, b) =>
+    order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy],
+  )
 
   if (isDesktopOrTablet) {
     return (
@@ -166,15 +238,23 @@ function AssetTable(props) {
         <thead>
           <tr>
             <th>{t('token')}</th>
-            <th>{t('apr')}</th>
-            <th>{t('assetBalance')}</th>
-            <th>{t('interestAccrued')}</th>
+            {headCells.map(headCell => (
+              <th key={headCell.id}>
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={order}
+                  onClick={() => handleRequestSort(headCell.id)}
+                >
+                  {headCell.label}
+                </TableSortLabel>
+              </th>
+            ))}
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {assets.map((asset, index) => (
-            <TableRow key={`${asset.tokenName}-${index}`} {...asset} />
+          {rows.map((row, index) => (
+            <TableRow key={`${row.tokenName}-${index}`} {...row} />
           ))}
         </tbody>
       </Table>
@@ -182,8 +262,8 @@ function AssetTable(props) {
   } else {
     return (
       <>
-        {assets.map((asset, index) => (
-          <ExpandableRow key={`${asset.tokenName}-${index}`} {...asset} />
+        {rows.map((row, index) => (
+          <ExpandableRow key={`${row.tokenName}-${index}`} {...row} />
         ))}
       </>
     )
