@@ -54,6 +54,7 @@ Please refer to [easydai.app/faq](https://easydai.app/faq)
 Copy `.env.example` file and set environment variables, including `NETWORK_ID`, `NETWORK_URL` and `GA_TOKEN` (Google Analytic)
 
 ```
+cp ./src/config/referrerWhiteList.json.example ./src/config/referrerWhiteList.json
 cp .env.example .env.local
 ```
 

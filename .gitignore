@@ -26,4 +26,4 @@ yarn-error.log*
 .secret
 .vscode
 
-/src/config
+/src/config/referrerWhiteList.json
