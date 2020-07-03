@@ -40,7 +40,7 @@ import ADAI_GATEWAY_1_ABI from '../constants/abis/aDaiGateway1.json'
 import ADAI_GATEWAY_2_ABI from '../constants/abis/aDaiGateway2.json'
 import ADAI_GATEWAY_3_ABI from '../constants/abis/aDaiGateway3.json'
 import ADAI_GATEWAY_4_ABI from '../constants/abis/aDaiGateway4.json'
-import AUSDT_GATEWAY_1_ABI from '../constants/abis/aUsdtGateway1.json'
+import AUSDT_GATEWAY_1_ABI from '../constants/abis/aUSDTGateway1.json'
 
 const GatewaysContext = createContext()
 
