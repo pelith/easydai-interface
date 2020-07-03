@@ -16,10 +16,12 @@ import BondEarnedContextProvider from './contexts/BondEarned'
 import GatewaysContextProvider from './contexts/Gateways'
 import DialogsProvider, { Dialogs } from './contexts/Dialogs'
 import AppLoader from './components/AppLoader'
+import Banner from './components/Banner'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Faq from './pages/Faq'
+import Comp from './pages/Comp'
 import ThemeProvider, { GlobalStyle } from './themes'
 
 function getLibrary(provider) {
@@ -79,10 +81,12 @@ function Router() {
           <DialogsProvider>
             <Dialogs />
             <AppLayout>
+              <Banner />
               <Header />
               <Body>
                 <Switch>
                   <Route path='/faq' component={Faq} />
+                  <Route path='/comp' component={Comp} />
                   <Route path='/' component={Home} />
                 </Switch>
               </Body>

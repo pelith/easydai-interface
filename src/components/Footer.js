@@ -187,9 +187,10 @@ export default function Footer() {
             <ExternalLink href='https://miner.easydai.app' target='_blank'>
               MinerDAI
             </ExternalLink>
-            <ExternalLink href='https://migrate.easydai.app' target='_blank'>
+            {/* <ExternalLink href='https://migrate.easydai.app' target='_blank'>
               Compound Dai Migration
-            </ExternalLink>
+            </ExternalLink> */}
+            <InternalLink to='/comp'>COMP</InternalLink>
           </OtherLinks>
         </FooterActions>
       </FooterTop>

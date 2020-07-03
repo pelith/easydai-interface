@@ -156,7 +156,9 @@ const Table = styled.table`
   }
 `
 
-const StyledArrowDownwardIcon = styled(ArrowDownwardIcon)`
+const StyledArrowDownwardIcon = styled(({ active, direction, ...props }) => (
+  <ArrowDownwardIcon {...props} />
+))`
   width: 18px;
   height: 18px;
   color: ${({ theme }) => theme.colors.blueGray400};

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { ReactComponent as CloseIcon } from '../assets/close.svg'
@@ -50,7 +51,7 @@ const Text = styled.div`
   text-align: center;
 `
 
-const ActionLink = styled.a`
+const ActionLink = styled(Link)`
   font-size: 12px;
   font-family: ${({ theme }) => theme.fontFamilies.notoSans};
   color: ${({ theme }) => theme.colors.ultramarineBlue};
@@ -88,10 +89,8 @@ export default function Banner() {
     <BannerWrapper isOpen={isOpen}>
       <BannerContent>
         <ChipText>News!</ChipText>
-        <Text>{t('cDaiMigrationMessage')}</Text>
-        <ActionLink href='https://migrate.easydai.app' target='_blank'>
-          {t('goTo')}
-        </ActionLink>
+        <Text>{t('collectCOMPMessage')}</Text>
+        <ActionLink to='/comp'>{t('goTo')}</ActionLink>
       </BannerContent>
       <BannerCloseButton onClick={() => setIsOpen(false)}>
         <StyledCloseIcon />
