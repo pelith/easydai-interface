@@ -219,7 +219,9 @@ export default function Dashboard() {
 
   const weiAmount = useMemo(
     () =>
-      etherAmount ? new BigNumber(ethers.utils.parseEther(etherAmount)) : null,
+      etherAmount
+        ? new BigNumber(ethers.utils.parseEther(etherAmount).toString())
+        : null,
     [etherAmount],
   )
 

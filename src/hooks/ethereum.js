@@ -1,8 +1,19 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 
-import { injected as injectedConnector } from '../connectors'
+import {
+  injected as injectedConnector,
+  network as networkConnector,
+} from '../connectors'
 import { getContract, getGasPrice, isContract } from '../utils'
+import { NetworkContextName } from '../constants'
+
+export function useWeb3React() {
+  const context = useWeb3ReactCore()
+  const contextNetwork = useWeb3ReactCore(NetworkContextName)
+
+  return context.active ? context : contextNetwork
+}
 
 export function useIsContractAddress(address) {
   const { library } = useWeb3React()
@@ -109,4 +120,35 @@ export function useInactiveListener(suppress = false) {
 
     return () => {}
   }, [active, error, suppress, activate])
+}
+
+export function useReadOnlyConnect() {
+  const { chainId, active } = useWeb3ReactCore()
+  const {
+    active: activeReadOnly,
+    connector: connectorReadOnly,
+    activate: activateReadOnly,
+  } = useWeb3ReactCore(NetworkContextName)
+
+  const changeChainId = useCallback(
+    id => {
+      if (connectorReadOnly === networkConnector) {
+        connectorReadOnly.changeChainId(id)
+      }
+    },
+    [connectorReadOnly],
+  )
+
+  useEffect(() => {
+    activateReadOnly(networkConnector)
+  }, [activateReadOnly])
+
+  // chainId of read-only web3 is followed by injected connector
+  useEffect(() => {
+    if (active && activeReadOnly) {
+      changeChainId(chainId)
+    }
+  }, [active, activeReadOnly, chainId, changeChainId])
+
+  return changeChainId
 }

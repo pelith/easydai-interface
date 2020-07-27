@@ -1,6 +1,8 @@
 import referral from '../config/referrerWhiteList.json'
 export const ReferralWhiteList = referral
 
+export const NetworkContextName = 'network'
+
 export const ETH_DECIMALS = 18
 
 export const SAI_ADDRESS = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'

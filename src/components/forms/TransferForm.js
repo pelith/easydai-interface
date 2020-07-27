@@ -132,44 +132,33 @@ export default function TransferForm(props) {
         const value = amountParsed.minus(new BigNumber(31000).times(gasPrice))
         if (value.isNegative()) return false
 
-        library.eth
-          .sendTransaction({
+        try {
+          const tx = await library.sendTransaction({
             from: account,
             to: address,
             value: value.toFixed(0),
             gas: 31000,
             gasPrice,
           })
-          .on('transactionHash', () => {
-            setIsPending(true)
-          })
-          .on('confirmation', confirmationNumber => {
-            if (confirmationNumber === 1) {
-              setIsPending(false)
-            }
-          })
-          .on('error', () => {
-            setIsPending(false)
-          })
+          setIsPending(true)
+
+          await tx.wait()
+        } finally {
+          setIsPending(false)
+        }
       } else {
         const contract = getContract(tokenAddress, ERC20_ABI, library, account)
-        contract.methods
-          .transfer(address, amountParsed.toFixed(0))
-          .send({
+        try {
+          const tx = await contract.transfer(address, amountParsed.toFixed(0), {
             gas: 250000,
             gasPrice,
           })
-          .on('transactionHash', () => {
-            setIsPending(true)
-          })
-          .on('confirmation', confirmationNumber => {
-            if (confirmationNumber === 1) {
-              setIsPending(false)
-            }
-          })
-          .on('error', () => {
-            setIsPending(false)
-          })
+          setIsPending(true)
+
+          await tx.wait()
+        } finally {
+          setIsPending(false)
+        }
       }
     }
     onSubmit()

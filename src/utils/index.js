@@ -2,6 +2,7 @@ import * as web3Utils from 'web3-utils'
 import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
 
+import UncheckedJsonRpcSigner from './signer'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { ReferralWhiteList } from '../constants'
 
@@ -42,7 +43,7 @@ export async function isContract(address, library) {
   if (!isAddress(address)) {
     throw Error(`Invalid 'address' parameter '${address}'`)
   }
-  const code = await library.eth.getCode(address)
+  const code = await library.getCode(address)
   return !!code.slice(2)
 }
 
@@ -66,12 +67,22 @@ export async function getGasPrice() {
   return gasPrice
 }
 
+export function getProviderOrSigner(library, account) {
+  return account
+    ? new UncheckedJsonRpcSigner(library.getSigner(account))
+    : library
+}
+
 export function getContract(address, abi, library, account) {
   if (!isAddress(address) || address === ethers.constants.AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
 
-  return new library.eth.Contract(abi, address, { from: account })
+  return new ethers.Contract(
+    address,
+    abi,
+    getProviderOrSigner(library, account),
+  )
 }
 
 export function getTokenBalance(tokenAddress, address, library) {
@@ -81,9 +92,7 @@ export function getTokenBalance(tokenAddress, address, library) {
     )
   }
 
-  return getContract(tokenAddress, ERC20_ABI, library)
-    .methods.balanceOf(address)
-    .call()
+  return getContract(tokenAddress, ERC20_ABI, library).balanceOf(address)
 }
 
 export async function getTokenAllowance(
@@ -103,9 +112,10 @@ export async function getTokenAllowance(
     )
   }
 
-  return getContract(tokenAddress, ERC20_ABI, library)
-    .methods.allowance(address, spenderAddress)
-    .call()
+  return getContract(tokenAddress, ERC20_ABI, library).allowance(
+    address,
+    spenderAddress,
+  )
 }
 
 export function amountFormatter(amount, baseDecimals, displayDecimals = 8) {

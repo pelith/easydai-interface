@@ -1,10 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
-import { useGasPrice } from '../hooks/ethereum'
-import { useWeb3ReadOnly } from '../contexts/Web3ReadOnly'
+import { useGasPrice, useWeb3React } from '../hooks/ethereum'
 import BigNumber from 'bignumber.js'
 import { isAddress, getContract, amountFormatter } from '../utils'
 import {
@@ -133,7 +131,7 @@ const Button = styled.button.attrs({ type: 'button' })`
 async function getCompEarned(account, library) {
   const comptroller = getContract(COMPTROLLER_ADDRESS, COMPTROLLER_ABI, library)
   const compBalances = await Promise.all([
-    comptroller.methods.compAccrued(account).call(),
+    comptroller.compAccrued(account),
     ...[
       CBAT_ADDRESS,
       CDAI_ADDRESS,
@@ -155,13 +153,13 @@ async function getCompEarned(account, library) {
           cTokenBorrowBalance,
           cTokenBorrowIndex,
         ] = await Promise.all([
-          comptroller.methods.compSupplyState(cTokenAddress).call(),
-          comptroller.methods.compSupplierIndex(cTokenAddress, account).call(),
-          comptroller.methods.compBorrowState(cTokenAddress).call(),
-          comptroller.methods.compBorrowerIndex(cTokenAddress, account).call(),
-          cToken.methods.balanceOf(account).call(),
-          cToken.methods.borrowBalanceStored(account).call(),
-          cToken.methods.borrowIndex().call(),
+          comptroller.compSupplyState(cTokenAddress),
+          comptroller.compSupplierIndex(cTokenAddress, account),
+          comptroller.compBorrowState(cTokenAddress),
+          comptroller.compBorrowerIndex(cTokenAddress, account),
+          cToken.balanceOf(account),
+          cToken.borrowBalanceStored(account),
+          cToken.borrowIndex(),
         ])
         const supplierComp = new BigNumber(compSupplyState.index)
           .minus(new BigNumber(compSupplierIndex))
@@ -188,7 +186,7 @@ async function getCompEarned(account, library) {
 
 export default function Comp() {
   const { library, account } = useWeb3React()
-  const { library: libraryReadOnly } = useWeb3ReadOnly()
+  const { library: libraryReadOnly } = useWeb3React()
   const { t } = useTranslation()
 
   const [amount, setAmount] = useState()
@@ -223,28 +221,22 @@ export default function Comp() {
         library,
         account,
       )
-      const claim = contract.methods.claimComp(account)
-      const gasPrice = await getPrice()
-      const estimatedGas = await claim.estimateGas()
-      setClaimError()
-      setIsPending(true)
-      claim
-        .send({
-          gas: estimatedGas,
+
+      try {
+        const gasPrice = await getPrice()
+        const estimatedGas = await contract.estimateGas.claimComp(account)
+        const tx = await contract.claimComp(account, {
           gasPrice,
+          gas: estimatedGas,
         })
-        .on('transactionHash', () => {
-          setIsPending(true)
-        })
-        .on('confirmation', confirmationNumber => {
-          if (confirmationNumber === 1) {
-            setIsPending(false)
-          }
-        })
-        .on('error', e => {
-          setClaimError(e)
-          setIsPending(false)
-        })
+        setClaimError()
+        setIsPending(true)
+        await tx.wait()
+      } catch (err) {
+        setClaimError(err.message)
+      } finally {
+        setIsPending(false)
+      }
 
       return () => {
         setClaimError()
