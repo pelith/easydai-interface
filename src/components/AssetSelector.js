@@ -2,17 +2,16 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
+import { gql, useQuery } from '@apollo/client'
 import styled from 'styled-components'
 
 import { useBondByAssetAndPlatform } from '../contexts/Bonds'
-import { useBondAPR } from '../contexts/BondAPR'
 import TokenLogo from './TokenLogo'
 import AssetList from './AssetList'
 import Subscribe from './Subscribe'
 import { ReactComponent as OverviewIcon } from '../assets/overview.svg'
 import { ReactComponent as SelectorIcon } from '../assets/selector.svg'
 import { ReactComponent as CloseIcon } from '../assets/close.svg'
-import { percentageFormatter } from '../utils'
 
 const SelectorButton = styled.button`
   width: 100%;
@@ -134,6 +133,15 @@ const StyledOverviewIcon = styled(OverviewIcon)`
   fill: ${({ theme }) => theme.colors.ultramarineBlue};
 `
 
+const GET_MARKET = gql`
+  query GetMarket($market: String!) {
+    market(id: $market) {
+      id
+      supplyRate
+    }
+  }
+`
+
 export default function AssetSelector() {
   const { t } = useTranslation()
   const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1124 })
@@ -143,7 +151,12 @@ export default function AssetSelector() {
   const platform = useMemo(() => pathname.split('/')[2], [pathname])
 
   const bond = useBondByAssetAndPlatform(asset, platform)
-  const apr = useBondAPR(bond && bond.address)
+  const { data } = useQuery(GET_MARKET, {
+    variables: {
+      market: bond && bond.address.toLowerCase(),
+    },
+  })
+  const apr = useMemo(() => (data ? data.market.supplyRate : null), [data])
 
   const [isOpen, setIsOpen] = useState(false)
   useEffect(() => {
@@ -165,7 +178,7 @@ export default function AssetSelector() {
           <TokenName>{bond.asset.toUpperCase()}</TokenName>
           <TokenPlatform>></TokenPlatform>
           <TokenPlatform>{bond.platform}</TokenPlatform>
-          <TokenAPR>{apr ? percentageFormatter(apr, 18) : '-'}</TokenAPR>
+          <TokenAPR>{apr ? `${(apr * 100).toFixed(2)} %` : '-'}</TokenAPR>
         </>
       )
     }

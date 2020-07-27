@@ -2,15 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import useCollapse from 'react-collapsed'
+import { gql, useQuery } from '@apollo/client'
 import styled from 'styled-components'
 
 import { useAllBondDetails } from '../contexts/Bonds'
-import { useAllBondAPRs } from '../contexts/BondAPR'
 import TokenLogo from './TokenLogo'
 import { ReactComponent as DropdownIcon } from '../assets/dropdown.svg'
 import { ReactComponent as OverviewIcon } from '../assets/overview.svg'
-import { percentageFormatter } from '../utils'
-import BigNumber from 'bignumber.js'
 
 const Container = styled.div`
   width: 100%;
@@ -149,10 +147,20 @@ const DropIconWrapper = styled.div`
   transition: 0.3s transform;
 `
 
+const GET_MARKETS = gql`
+  query GetMarket {
+    markets {
+      id
+      supplyRate
+    }
+  }
+`
+
 export default function AssetList() {
   const { t } = useTranslation()
   const allBonds = useAllBondDetails()
-  const allAPRs = useAllBondAPRs()
+
+  const { data } = useQuery(GET_MARKETS)
 
   const { pathname, search } = useLocation()
   const tokenNameInURL = useMemo(() => pathname.split('/')[1], [pathname])
@@ -164,8 +172,12 @@ export default function AssetList() {
         const asset = bond.asset
         const platform = bond.platform
         const to = `/${asset.toLowerCase()}/${platform.toLowerCase()}${search}`
-        const apr =
-          allAPRs && allAPRs[tokenAddress] ? allAPRs[tokenAddress].value : null
+        const supplyRate =
+          data &&
+          data.markets.filter(
+            market => market.id.toLowerCase() === tokenAddress.toLowerCase(),
+          )[0].supplyRate
+        const apr = parseFloat(supplyRate)
         const bonds = groups[asset]
           ? [...groups[asset], { asset, platform, to, apr }]
           : [{ asset, platform, to, apr }]
@@ -183,7 +195,7 @@ export default function AssetList() {
       isActive: tokenNameInURL.toLowerCase() === asset.toLowerCase(),
       bonds: bondGroupByAsset[asset],
     }))
-  }, [allAPRs, allBonds, search, tokenNameInURL])
+  }, [allBonds, data, search, tokenNameInURL])
 
   return (
     <Container>
@@ -218,10 +230,9 @@ function ItemGroup(props) {
     setIsOpen(isActive)
   }, [isActive])
 
-  const maxAPR = useMemo(
-    () => BigNumber.maximum(...bonds.map(bond => bond.apr)),
-    [bonds],
-  )
+  const maxAPR = useMemo(() => Math.max(...bonds.map(bond => bond.apr)), [
+    bonds,
+  ])
 
   const renderItems = () => {
     return bonds.map(bond => (
@@ -229,7 +240,7 @@ function ItemGroup(props) {
         <ItemContent className='nav-item'>
           <ItemTitle className='nav-text'>{bond.platform}</ItemTitle>
           <ItemValue className='nav-text'>
-            {bond.apr ? percentageFormatter(bond.apr, 18) : '-'}
+            {!isNaN(bond.apr) ? `${(bond.apr * 100).toFixed(2)} %` : '-'}
           </ItemValue>
         </ItemContent>
       </ItemNavLink>
@@ -250,7 +261,7 @@ function ItemGroup(props) {
           </ItemIconWrapper>
           <ItemGroupTitle isActive={isActive}>{tokenName}</ItemGroupTitle>
           <ItemGroupValue isActive={isOpen}>
-            {maxAPR && !maxAPR.isNaN() && percentageFormatter(maxAPR, 18)}
+            {!isNaN(maxAPR) && `${(maxAPR * 100).toFixed(2)} %`}
           </ItemGroupValue>
           <DropIconWrapper isOpen={isOpen}>
             <DropdownIcon />

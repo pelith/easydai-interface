@@ -2,7 +2,32 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 
 import { injected as injectedConnector } from '../connectors'
-import { getContract, getGasPrice } from '../utils'
+import { getContract, getGasPrice, isContract } from '../utils'
+
+export function useIsContractAddress(address) {
+  const { library } = useWeb3React()
+  const [isContractAddress, setIsContractAddress] = useState(false)
+  useEffect(() => {
+    let stale = false
+    isContract(address, library)
+      .then(result => {
+        if (!stale) {
+          setIsContractAddress(result)
+        }
+      })
+      .catch(() => {
+        if (!stale) {
+          setIsContractAddress(false)
+        }
+      })
+
+    return () => {
+      stale = true
+    }
+  })
+
+  return isContractAddress
+}
 
 export function useContract(address, abi, withSignerIfPossible = true) {
   const { account, library } = useWeb3React()

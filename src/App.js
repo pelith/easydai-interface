@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { Web3ReactProvider } from '@web3-react/core'
 import Web3 from 'web3'
 import styled from 'styled-components'
@@ -23,6 +24,11 @@ import Home from './pages/Home'
 import Faq from './pages/Faq'
 import Comp from './pages/Comp'
 import ThemeProvider, { GlobalStyle } from './themes'
+
+const client = new ApolloClient({
+  uri: 'https://api.thegraph.com/subgraphs/name/pelith/easydai',
+  cache: new InMemoryCache(),
+})
 
 function getLibrary(provider) {
   return new Web3(provider)
@@ -101,15 +107,17 @@ function Router() {
 
 function App() {
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <ContextProviders>
-        <Updaters />
-        <ThemeProvider>
-          <GlobalStyle />
-          <Router />
-        </ThemeProvider>
-      </ContextProviders>
-    </Web3ReactProvider>
+    <ApolloProvider client={client}>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <ContextProviders>
+          <Updaters />
+          <ThemeProvider>
+            <GlobalStyle />
+            <Router />
+          </ThemeProvider>
+        </ContextProviders>
+      </Web3ReactProvider>
+    </ApolloProvider>
   )
 }
 
