@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import BigNumber from 'bignumber.js'
 
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { useBlockNumber } from './Application'
 import { useTokenBalance } from './Balances'
 import { useBondDetails, useAllBondDetails } from './Bonds'
@@ -293,7 +293,7 @@ function calculateAaveEarned(address, transferEvents) {
 }
 
 export function useBondEarned(tokenAddress, address) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const bond = useBondDetails(tokenAddress)
 
@@ -357,7 +357,7 @@ export function useBondEarned(tokenAddress, address) {
 }
 
 export function useAllBondEarned(address) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const allBonds = useAllBondDetails()
 
@@ -429,7 +429,7 @@ export function useAllBondEarned(address) {
 }
 
 export function useBondProfit(tokenAddress, address) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
 
   const globalBlockNumber = useBlockNumber()
   const bond = useBondDetails(tokenAddress)

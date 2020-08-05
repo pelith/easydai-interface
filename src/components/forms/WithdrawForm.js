@@ -18,7 +18,7 @@ import {
   MaxButton,
 } from './formStyles'
 import { ReactComponent as LoadingIcon } from '../../assets/loading.svg'
-import { amountFormatter } from '../../utils'
+import { getContract, amountFormatter } from '../../utils'
 
 const WITHDRAW_METHODS = {
   Compound: 'redeem',
@@ -134,52 +134,62 @@ export default function WithdrawForm(props) {
       cTokenAmount.lte(balance) &&
       bond.abi &&
       tokenAddress &&
-      !isPending
+      !isPending &&
+      library &&
+      account
     ) {
-      const contract = new library.eth.Contract(bond.abi, tokenAddress)
+      const contract = getContract(tokenAddress, bond.abi, library, account)
       const gasPrice = await getPrice()
       const amount = balance.minus(cTokenAmount).lt(0.001)
         ? balance
         : cTokenAmount
 
-      let withdraw
-      if (bond.platform === 'Compound') {
-        withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
-          amount.toFixed(0),
-        )
-      } else if (bond.platform === 'Fulcrum') {
-        withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
-          account,
-          amount.toFixed(0),
-        )
-      } else if (bond.platform === 'MakerDAO') {
-        withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
-          account,
-          amount.toFixed(0),
-        )
-      } else if (bond.platform === 'AAVE') {
-        withdraw = contract.methods[WITHDRAW_METHODS[bond.platform]](
-          amount.toFixed(0),
-        )
-      }
+      try {
+        let tx
+        if (bond.platform === 'Compound') {
+          tx = await contract[WITHDRAW_METHODS[bond.platform]](
+            amount.toFixed(0),
+            {
+              gasLimit: `0x${WITHDRAW_GASES[bond.platform].toString(16)}`,
+              gasPrice: `0x${gasPrice.toString(16)}`,
+            },
+          )
+        } else if (bond.platform === 'Fulcrum') {
+          tx = await contract[WITHDRAW_METHODS[bond.platform]](
+            account,
+            amount.toFixed(0),
+            {
+              gasLimit: `0x${WITHDRAW_GASES[bond.platform].toString(16)}`,
+              gasPrice: `0x${gasPrice.toString(16)}`,
+            },
+          )
+        } else if (bond.platform === 'MakerDAO') {
+          tx = await contract[WITHDRAW_METHODS[bond.platform]](
+            account,
+            amount.toFixed(0),
+            {
+              gasLimit: `0x${WITHDRAW_GASES[bond.platform].toString(16)}`,
+              gasPrice: `0x${gasPrice.toString(16)}`,
+            },
+          )
+        } else if (bond.platform === 'AAVE') {
+          tx = await contract[WITHDRAW_METHODS[bond.platform]](
+            amount.toFixed(0),
+            {
+              gasLimit: `0x${WITHDRAW_GASES[bond.platform].toString(16)}`,
+              gasPrice: `0x${gasPrice.toString(16)}`,
+            },
+          )
+        }
 
-      withdraw
-        .send({
-          from: account,
-          gas: WITHDRAW_GASES[bond.platform],
-          gasPrice,
-        })
-        .on('transactionHash', () => {
-          setIsPending(true)
-        })
-        .on('confirmation', confirmationNumber => {
-          if (confirmationNumber === 1) {
-            setIsPending(false)
-          }
-        })
-        .on('error', () => {
-          setIsPending(false)
-        })
+        setIsPending(true)
+
+        await tx.wait()
+      } catch (err) {
+        console.log(err.message)
+      } finally {
+        setIsPending(false)
+      }
     }
     onSubmit()
     ReactGA.event({

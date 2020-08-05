@@ -1,127 +1,12 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMediaQuery } from 'react-responsive'
 import useCollapse from 'react-collapsed'
 import { Link } from 'react-router-dom'
-import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
-
-import { useAllBondDetails } from '../contexts/Bonds'
-import { useAllBondBalances } from '../contexts/Balances'
-import { useAllBondAPRs } from '../contexts/BondAPR'
-import { useAllBondExchangeRates } from '../contexts/BondExchangeRates'
-import { useAllBondEarned } from '../contexts/BondEarned'
 import TokenLogo from './TokenLogo'
-import Subscribe from './Subscribe'
 import { ReactComponent as ArrowDownwardIcon } from '../assets/arrow_downward.svg'
 import { ReactComponent as DropdownIcon } from '../assets/dropdown.svg'
-import { amountFormatter, percentageFormatter } from '../utils'
-
-const Container = styled.div`
-  width: 100%;
-
-  > *:not(:first-child) {
-    margin-top: 40px;
-  }
-`
-
-const Card = styled.div`
-  width: 100%;
-  border-radius: 12px;
-  padding: 24px 32px;
-  background-color: ${({ theme }) => theme.colors.white};
-  box-shadow: 0 3px 14px 0 rgba(185, 209, 221, 0.5);
-
-  ${({ theme }) => theme.mediaQuery.md`
-    padding: 24px 48px;
-  `}
-`
-
-const CardTitle = styled.div`
-  font-size: 18px;
-  font-weight: 500;
-  font-family: ${({ theme }) => theme.fontFamilies.notoSans};
-  letter-spacing: 1px;
-  color: ${({ theme }) => theme.colors.textColor};
-`
-
-const CardContent = styled.div`
-  margin-top: 16px;
-`
-
-export default function AssetOverview() {
-  const { t } = useTranslation()
-  const { account } = useWeb3React()
-  const allBonds = useAllBondDetails()
-  const allBalances = useAllBondBalances(account)
-  const allAPRs = useAllBondAPRs()
-  const allExchangeRates = useAllBondExchangeRates()
-  const allEarned = useAllBondEarned(account)
-  const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1124 })
-
-  const assets = useMemo(() => {
-    return Object.keys(allBonds).map(tokenAddress => ({
-      tokenName: allBonds[tokenAddress].asset,
-      tokenPlatform: allBonds[tokenAddress].platform,
-      tokenDecimals: allBonds[tokenAddress].assetDecimals,
-      apr:
-        allAPRs && allAPRs[tokenAddress] ? allAPRs[tokenAddress].value : null,
-      balance:
-        allBonds[tokenAddress].platform === 'AAVE'
-          ? allBalances && allBalances[tokenAddress]
-            ? allBalances[tokenAddress].value
-            : null
-          : allBalances &&
-            allBalances[tokenAddress] &&
-            allExchangeRates &&
-            allExchangeRates[tokenAddress]
-          ? allBalances[tokenAddress].value.times(
-              allExchangeRates[tokenAddress].value,
-            )
-          : null,
-      earned:
-        allEarned && allEarned[tokenAddress] ? allEarned[tokenAddress] : null,
-    }))
-  }, [allBonds, allAPRs, allBalances, allExchangeRates, allEarned])
-
-  const holdingAssets = useMemo(
-    () => assets.filter(asset => asset.balance && !asset.balance.isZero()),
-    [assets],
-  )
-
-  const otherAssets = useMemo(
-    () => assets.filter(asset => !asset.balance || asset.balance.isZero()),
-    [assets],
-  )
-
-  return (
-    <Container>
-      {!!holdingAssets.length && (
-        <Card>
-          <CardTitle>{t('holdingAssets')}</CardTitle>
-          <CardContent>
-            <AssetTable assets={holdingAssets} />
-          </CardContent>
-        </Card>
-      )}
-      <Card>
-        <CardTitle>
-          {!!holdingAssets.length
-            ? t('otherOppertunities')
-            : t('allOppertunities')}
-        </CardTitle>
-        <CardContent>
-          <AssetTable assets={otherAssets} />
-        </CardContent>
-      </Card>
-      {!isDesktopOrLaptop ? <Subscribe /> : ''}
-    </Container>
-  )
-}
-
-/**
- * AssetTable
- */
 
 const Table = styled.table`
   width: 100%;
@@ -210,9 +95,11 @@ function TableSortLabel(props) {
   )
 }
 
-function AssetTable(props) {
-  const { assets } = props
+export default function AssetTable(props) {
+  const { data } = props
+
   const { t } = useTranslation()
+
   const isDesktopOrTablet = useMediaQuery({ minDeviceWidth: 768 })
 
   const [order, setOrder] = useState('desc')
@@ -230,7 +117,7 @@ function AssetTable(props) {
     { id: 'earned', label: t('interestAccrued') },
   ]
 
-  const rows = assets.sort((a, b) =>
+  const rows = data.sort((a, b) =>
     order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy],
   )
 
@@ -375,14 +262,7 @@ const DropIconWrapper = styled.div`
 `
 
 function TableRow(props) {
-  const {
-    tokenName,
-    tokenPlatform,
-    tokenDecimals,
-    apr,
-    balance,
-    earned,
-  } = props
+  const { tokenName, tokenPlatform, apr, balance, earned } = props
 
   const { t } = useTranslation()
 
@@ -398,17 +278,13 @@ function TableRow(props) {
         </ItemLeft>
       </td>
       <td>
-        <TokenAPR>{percentageFormatter(apr, 18)}</TokenAPR>
+        <TokenAPR>{`${(apr * 100).toFixed(2)} %`}</TokenAPR>
       </td>
       <td>
-        <TokenValue>
-          {balance ? amountFormatter(balance, tokenDecimals, 6) : '-'}
-        </TokenValue>
+        <TokenValue>{balance ? balance.toFixed(6) : '-'}</TokenValue>
       </td>
       <td>
-        <TokenValue>
-          {earned ? amountFormatter(earned, tokenDecimals, 6) : '-'}
-        </TokenValue>
+        <TokenValue>{earned ? earned.toFixed(6) : '-'}</TokenValue>
       </td>
       <td>
         <LendButton
@@ -422,14 +298,7 @@ function TableRow(props) {
 }
 
 function ExpandableRow(props) {
-  const {
-    tokenName,
-    tokenPlatform,
-    tokenDecimals,
-    apr,
-    balance,
-    earned,
-  } = props
+  const { tokenName, tokenPlatform, apr, balance, earned } = props
 
   const { t } = useTranslation()
 
@@ -446,7 +315,7 @@ function ExpandableRow(props) {
           </div>
         </ItemLeft>
         <ItemRight>
-          <TokenAPR>{percentageFormatter(apr, 18)}</TokenAPR>
+          <TokenAPR>{`${(apr * 100).toFixed(2)} %`}</TokenAPR>
           <DropIconWrapper isOpen={isOpen}>
             <DropdownIcon />
           </DropIconWrapper>
@@ -456,14 +325,14 @@ function ExpandableRow(props) {
         <ItemProperty>
           <ItemTitle>{t('assetBalance')}</ItemTitle>
           <TokenValue>
-            {balance ? amountFormatter(balance, tokenDecimals, 6) : 0}
+            {balance ? balance.toFixed(6) : 0}
             <TokenUnit>{tokenName}</TokenUnit>
           </TokenValue>
         </ItemProperty>
         <ItemProperty>
           <ItemTitle>{t('interestAccrued')}</ItemTitle>
           <TokenValue>
-            {earned ? amountFormatter(earned, tokenDecimals, 6) : 0}
+            {earned ? earned.toFixed(6) : 0}
             <TokenUnit>{tokenName}</TokenUnit>
           </TokenValue>
         </ItemProperty>

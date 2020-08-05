@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import AssetSelector from '../components/AssetSelector'
 import { ReferralWhiteList } from '../constants'
 
-const AssetDashboard = lazy(() => import('../components/AssetDashboard'))
-const AssetOverview = lazy(() => import('../components/AssetOverview'))
+const Dashboard = lazy(() => import('./Dashboard'))
+const Overview = lazy(() => import('./Overview'))
 
 const AppWrapper = styled.div`
   ${({ theme }) => theme.mediaQuery.lg`
@@ -43,7 +43,7 @@ export default function Home() {
         <Suspense fallback={null}>
           <Switch>
             <Route exact strict path='/overview'>
-              <AssetOverview />
+              <Overview />
             </Route>
             {// old referral links
             Object.keys(ReferralWhiteList).map(name => (
@@ -56,7 +56,7 @@ export default function Home() {
               />
             ))}
             <Route exact strict path='/:token/:platform'>
-              <AssetDashboard />
+              <Dashboard />
             </Route>
             <Redirect to='/overview' />
           </Switch>

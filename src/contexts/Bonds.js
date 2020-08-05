@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { safeAccess } from '../utils'
 import CTOKEN_ABI from '../constants/abis/cToken.json'
 import ITOKEN_ABI from '../constants/abis/iToken.json'
@@ -119,19 +119,19 @@ export default function Provider({ children }) {
 }
 
 export function useAllBondDetails() {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId } = useWeb3React()
   const bondsContext = useBondsContext()
   return safeAccess(bondsContext, [chainId])
 }
 
 export function useBondDetails(tokenAddress) {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId } = useWeb3React()
   const bondsContext = useBondsContext()
   return safeAccess(bondsContext, [chainId, tokenAddress])
 }
 
 export function useBondByAssetAndPlatform(asset, platform) {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId } = useWeb3React()
   const bondsContext = useBondsContext()
   const bonds = safeAccess(bondsContext, [chainId])
   const filteredBonds = Object.keys(bonds)

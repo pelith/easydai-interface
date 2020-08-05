@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useDialogsContext, WALLET } from '../contexts/Dialogs'
 import TokenLogo from './TokenLogo'
 import { ReactComponent as LoadingIcon } from '../assets/loading.svg'
-import { shortenAddress, amountFormatter } from '../utils'
+import { shortenAddress } from '../utils'
 
 const DocumentWrapper = styled.div`
   margin-bottom: 40px;
@@ -224,7 +224,6 @@ export default function LendingDocument(props) {
   const {
     tokenName,
     tokenPlatform,
-    tokenDecimals,
     account,
     amount,
     exchangeRate,
@@ -250,18 +249,12 @@ export default function LendingDocument(props) {
             <Title>{tokenName.toUpperCase()}</Title>
             <SubTitle>
               {exchangeRate
-                ? `1 ETH = ${amountFormatter(
-                    exchangeRate,
-                    tokenDecimals,
-                    2,
-                  )} ${tokenName}`
+                ? `1 ETH = ${exchangeRate} ${tokenName}`
                 : `${t('exchangeRate')} -`}
             </SubTitle>
           </LabelText>
         </Label>
-        <OutputValue isActive={isActive}>
-          {amount ? amountFormatter(amount, tokenDecimals, 2) : '0.00'}
-        </OutputValue>
+        <OutputValue isActive={isActive}>{amount}</OutputValue>
       </DocumentOutput>
       <DocumentDetails>
         <Paragraph>
@@ -275,7 +268,7 @@ export default function LendingDocument(props) {
           {t('estimatedInterestMessage')}{' '}
           {estimatedEarned ? (
             <Bold>
-              {amountFormatter(estimatedEarned, tokenDecimals)} {tokenName}
+              {estimatedEarned} {tokenName}
             </Bold>
           ) : (
             '-'

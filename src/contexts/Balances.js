@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react'
 
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { useBlockNumber } from './Application'
 import { useAllBondDetails } from './Bonds'
 import { safeAccess, isAddress, getTokenBalance } from '../utils'
@@ -96,7 +96,7 @@ export default function Provider({ children }) {
 }
 
 export function useTokenBalance(tokenAddress, address) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
 
   const globalBlockNumber = useBlockNumber()
 
@@ -120,7 +120,7 @@ export function useTokenBalance(tokenAddress, address) {
               chainId,
               address,
               tokenAddress,
-              new BigNumber(value),
+              new BigNumber(value.toString()),
               globalBlockNumber,
             )
           }
@@ -149,7 +149,7 @@ export function useTokenBalance(tokenAddress, address) {
 }
 
 export function useAllBondBalances(address) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
 
   const allBonds = useAllBondDetails()
@@ -168,7 +168,7 @@ export function useAllBondBalances(address) {
               library,
             )
             return (newBalances[tokenAddress] = {
-              value: new BigNumber(balance),
+              value: new BigNumber(balance.toString()),
               blockNumber: globalBlockNumber,
             })
           }
@@ -183,7 +183,7 @@ export function useAllBondBalances(address) {
 }
 
 export function useEtherBalance(address) {
-  const { library } = useWeb3ReadOnly()
+  const { library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
 
   const [balance, setBalance] = useState()
@@ -191,11 +191,11 @@ export function useEtherBalance(address) {
   useEffect(() => {
     let stale = false
     if (address && isAddress(address) && library && globalBlockNumber) {
-      library.eth
+      library
         .getBalance(address)
         .then(result => {
           if (!stale) {
-            setBalance(new BigNumber(result))
+            setBalance(new BigNumber(result.toString()))
           }
         })
         .catch(() => {

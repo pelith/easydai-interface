@@ -6,8 +6,7 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
-import { ethers } from 'ethers'
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { safeAccess } from '../utils'
 
 const BLOCK_NUMBER = 'BLOCK_NUMBER'
@@ -63,14 +62,14 @@ export default function Provider({ children }) {
 }
 
 export function Updater() {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const [, { updateBlockNumber }] = useApplicationContext()
 
   useEffect(() => {
     if (library) {
       let stale = false
       function update() {
-        library.eth
+        library
           .getBlockNumber()
           .then(blockNumber => {
             if (!stale) {
@@ -85,15 +84,11 @@ export function Updater() {
       }
 
       update()
-      const ethersLibrary = new ethers.providers.JsonRpcProvider(
-        library.currentProvider.host,
-      )
-      ethersLibrary.pollingInterval = 8000
-      ethersLibrary.on('block', update)
+      library.on('block', update)
 
       return () => {
         stale = true
-        ethersLibrary.removeListener('block', update)
+        library.removeListener('block', update)
       }
     }
   }, [chainId, library, updateBlockNumber])
@@ -102,7 +97,7 @@ export function Updater() {
 }
 
 export function useBlockNumber() {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId } = useWeb3React()
 
   const [state] = useApplicationContext()
 

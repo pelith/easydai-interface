@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 import { useDialogsContext, WITHDRAW, WALLET } from '../contexts/Dialogs'
 import { ReactComponent as WithDrawIcon } from '../assets/withdraw.svg'
-import { amountFormatter } from '../utils'
 import FlipNumbers from './flipNumber'
 
 const Container = styled.div`
@@ -161,7 +160,7 @@ const WithdrawButton = styled.button`
 `
 
 export default function FinancialStatement(props) {
-  const { tokenName, tokenDecimals, balance, profit, earned, isBlock } = props
+  const { tokenName, balance, profit, earned, isBlock } = props
   const { t } = useTranslation()
   const [, { open }] = useDialogsContext()
 
@@ -186,7 +185,7 @@ export default function FinancialStatement(props) {
                   play
                   duration={0.8}
                   delay={0.1}
-                  numbers={amountFormatter(balance, tokenDecimals)}
+                  numbers={balance}
                 />
               </>
             ) : (
@@ -212,7 +211,7 @@ export default function FinancialStatement(props) {
                   play
                   duration={0.8}
                   delay={0.1}
-                  numbers={amountFormatter(profit, tokenDecimals)}
+                  numbers={profit}
                 />
               </>
             ) : (
@@ -238,7 +237,7 @@ export default function FinancialStatement(props) {
                   play
                   duration={0.8}
                   delay={0.1}
-                  numbers={amountFormatter(earned, tokenDecimals)}
+                  numbers={earned}
                 />
               </>
             ) : (
