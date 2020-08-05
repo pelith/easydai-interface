@@ -238,7 +238,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (
       etherBalance &&
-      etherBalance.minus(1e16).lte(weiAmount) &&
+      etherBalance.minus(1e16).lt(weiAmount) &&
       !isContractAddress
     ) {
       setBalanceError(t('insufficientGas'))
@@ -339,7 +339,7 @@ export default function Dashboard() {
       if (isContractAddress) {
         setEtherAmount(amountFormatter(etherBalance, 18))
       } else {
-        const amount = BigNumber.maximum(0, etherBalance.minus(1e16))
+        const amount = BigNumber.maximum(0, etherBalance.minus(1.0000005e16))
         setEtherAmount(amountFormatter(amount, 18))
       }
     }

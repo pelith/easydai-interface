@@ -1,4 +1,4 @@
-import WalletConnect from '@walletconnect/browser'
+import WalletConnect from '@walletconnect/client'
 import WalletConnectQRCodeModal from '@walletconnect/qrcode-modal'
 import ProviderEngine from 'web3-provider-engine'
 import CacheSubprovider from 'web3-provider-engine/subproviders/cache'
