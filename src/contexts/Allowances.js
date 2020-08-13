@@ -117,7 +117,7 @@ export function useTokenAllowance(tokenAddress, address, spenderAddress) {
               address,
               tokenAddress,
               spenderAddress,
-              new BigNumber(value),
+              new BigNumber(value.toString()),
               globalBlockNumber,
             )
           }
@@ -161,29 +161,27 @@ export function useTokenApprove(tokenAddress, address, spenderAddress) {
   const [error, setError] = useState()
 
   const approve = useCallback(async () => {
-    const tokenApprove = tokenContract.methods.approve(
-      spenderAddress,
-      ethers.constants.MaxUint256,
-    )
-    const estimatedGas = await tokenApprove.estimateGas()
-    const gasPrice = await getPrice()
-    tokenApprove
-      .send({
-        gasPrice,
-        gas: new BigNumber(estimatedGas).times(1.2).toFixed(0),
-      })
-      .on('transactionHash', () => {
-        setIsLoading(true)
-      })
-      .on('confirmation', confirmationNumber => {
-        if (confirmationNumber === 1) {
-          setIsLoading(false)
-        }
-      })
-      .on('error', error => {
-        setIsLoading(false)
-        setError(error)
-      })
+    try {
+      const gasPrice = await getPrice()
+      const estimatedGas = await tokenContract.estimateGas.approce(
+        spenderAddress,
+        ethers.constants.MaxUint256,
+      )
+      const tx = await tokenContract.approve(
+        spenderAddress,
+        ethers.constants.MaxUint256,
+        {
+          gasPrice,
+          gas: new BigNumber(estimatedGas).times(1.2).toFixed(0),
+        },
+      )
+      setIsLoading(true)
+      await tx.wait()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsLoading(false)
+    }
   }, [getPrice, spenderAddress, tokenContract])
 
   return { approve, isLoading, error }

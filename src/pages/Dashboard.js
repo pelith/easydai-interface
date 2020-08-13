@@ -1,33 +1,24 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useMemo, useEffect, useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import ReactGA from 'react-ga'
 import { useWeb3React } from '@web3-react/core'
+import { useLazyQuery, gql, useQuery } from '@apollo/client'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
-import { useMediaQuery } from 'react-responsive'
-
+import { useEtherBalance } from '../contexts/Balances'
 import { useBondByAssetAndPlatform } from '../contexts/Bonds'
-import { useTokenBalance, useEtherBalance } from '../contexts/Balances'
-import { useBondExchangeRate } from '../contexts/BondExchangeRates'
-import { useBondEarned, useBondProfit } from '../contexts/BondEarned'
-import { useBondAPR } from '../contexts/BondAPR'
 import { useGatewaySwap, useReferralGatewaySwap } from '../contexts/Gateways'
-import FinancialStatement from './FinancialStatement'
-import EtherInput from './EtherInput'
-import LendingDocument from './LendingDocument'
-import TokenLogo from './TokenLogo'
-import PlatformLogo from './PlatformLogo'
-import Subscribe from './Subscribe'
+import { useIsContractAddress } from '../hooks/ethereum'
+import FinancialStatement from '../components/FinancialStatement'
+import EtherInput from '../components/EtherInput'
+import LendingDocument from '../components/LendingDocument'
+import TokenLogo from '../components/TokenLogo'
+import PlatformLogo from '../components/PlatformLogo'
 import { ReactComponent as ArrowIcon } from '../assets/arrow.svg'
 import { ReactComponent as RightArrowIcon } from '../assets/right_arrow.svg'
-import {
-  parseQueryString,
-  getReferralAddress,
-  amountFormatter,
-  isContract,
-} from '../utils'
+import { parseQueryString, getReferralAddress, amountFormatter } from '../utils'
 
 const Header = styled.header`
   width: 100%;
@@ -127,39 +118,100 @@ const StyledPlatformLogo = styled(PlatformLogo)`
   height: 28px;
 `
 
-export default function AssetDashboard() {
+const GET_MARKET = gql`
+  query GetMarket($market: String!) {
+    market(id: $market) {
+      id
+      exchangeRate
+      supplyRate
+    }
+  }
+`
+
+const GET_ACCOUNT_BOND = gql`
+  query GetAccountBond($account: String!, $market: String!) {
+    account(id: $account) {
+      id
+      bonds(where: { market: $market }) {
+        id
+        normalizedBalance
+        principalBalance
+        totalUnderlyingSupplied
+        totalUnderlyingRedeemed
+      }
+    }
+  }
+`
+
+export default function Dashboard() {
   const { t } = useTranslation()
 
-  const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1124 })
-  const { search } = useLocation()
-  const referral = useMemo(() => parseQueryString(search)['referral'], [search])
-  const referralAddress = useMemo(
-    () => (referral ? getReferralAddress(referral) : null),
-    [referral],
-  )
+  const { account } = useWeb3React()
 
-  const { account, library } = useWeb3React()
-  const [isContractWallet, setIsContractWallet] = useState(false)
-  useEffect(() => {
-    let stale = false
-    isContract(account, library)
-      .then(result => {
-        if (!stale) {
-          setIsContractWallet(result)
-        }
-      })
-      .catch(() => {
-        if (!stale) {
-          setIsContractWallet(false)
-        }
-      })
+  const { token, platform } = useParams()
+  const bond = useBondByAssetAndPlatform(token, platform)
 
-    return () => {
-      stale = true
-    }
+  const { data: marketData } = useQuery(GET_MARKET, {
+    variables: {
+      market: bond.address.toLowerCase(),
+    },
   })
 
-  const { token: asset, platform } = useParams()
+  const [getAccountStats, { data: accountData }] = useLazyQuery(
+    GET_ACCOUNT_BOND,
+    {
+      variables: {
+        account: account ? account.toLowerCase() : '',
+        market: bond.address.toLowerCase(),
+      },
+    },
+  )
+  useEffect(() => {
+    if (account) {
+      getAccountStats()
+    }
+  }, [account, getAccountStats])
+
+  const exchangeRate = useMemo(
+    () => (marketData ? marketData.market.exchangeRate : null),
+    [marketData],
+  )
+
+  const supplyRate = useMemo(
+    () => (marketData ? marketData.market.supplyRate : null),
+    [marketData],
+  )
+
+  const accountBond = useMemo(
+    () => (accountData ? accountData.account.bonds[0] : null),
+    [accountData],
+  )
+
+  const balance = useMemo(
+    () =>
+      accountBond
+        ? new BigNumber(accountBond.normalizedBalance).times(exchangeRate)
+        : null,
+    [accountBond, exchangeRate],
+  )
+
+  const profit = useMemo(
+    () =>
+      balance
+        ? new BigNumber(balance).minus(accountBond.principalBalance)
+        : null,
+    [accountBond, balance],
+  )
+
+  const earned = useMemo(
+    () =>
+      accountBond
+        ? new BigNumber(accountBond.totalUnderlyingRedeemed)
+            .minus(accountBond.totalUnderlyingSupplied)
+            .plus(balance)
+        : null,
+    [accountBond, balance],
+  )
 
   const [etherAmount, setEtherAmount] = useState('')
   const [outputAmount, setOutputAmount] = useState()
@@ -167,15 +219,18 @@ export default function AssetDashboard() {
 
   const weiAmount = useMemo(
     () =>
-      etherAmount ? new BigNumber(ethers.utils.parseEther(etherAmount)) : null,
+      etherAmount
+        ? new BigNumber(ethers.utils.parseEther(etherAmount).toString())
+        : null,
     [etherAmount],
   )
 
   useEffect(() => {
     setOutputAmount()
     setGatewayNumber()
-  }, [asset, platform])
+  }, [token, platform])
 
+  const isContractAddress = useIsContractAddress(account)
   const etherBalance = useEtherBalance(account)
 
   // check balance is enough
@@ -183,8 +238,8 @@ export default function AssetDashboard() {
   useEffect(() => {
     if (
       etherBalance &&
-      etherBalance.minus(1e16).lte(weiAmount) &&
-      !isContractWallet
+      etherBalance.minus(1e16).lt(weiAmount) &&
+      !isContractAddress
     ) {
       setBalanceError(t('insufficientGas'))
     } else if (etherBalance && etherBalance.lt(weiAmount)) {
@@ -192,24 +247,14 @@ export default function AssetDashboard() {
     } else {
       setBalanceError()
     }
-  }, [etherBalance, isContractWallet, t, weiAmount])
+  }, [etherBalance, isContractAddress, t, weiAmount])
 
-  const bond = useBondByAssetAndPlatform(asset, platform)
-  const balance = useTokenBalance(bond.address, account)
-  const exchangeRate = useBondExchangeRate(bond.address)
-  const balanceComputed = useMemo(() => {
-    if (balance) {
-      if (bond.platform === 'AAVE') {
-        return balance
-      } else if (exchangeRate) {
-        return balance.times(exchangeRate)
-      }
-    }
-    return null
-  }, [balance, exchangeRate, bond.platform])
-  const earned = useBondEarned(bond.address, account)
-  const profit = useBondProfit(bond.address, account)
-  const apr = useBondAPR(bond.address)
+  const { search } = useLocation()
+  const referral = useMemo(() => parseQueryString(search)['referral'], [search])
+  const referralAddress = useMemo(
+    () => (referral ? getReferralAddress(referral) : null),
+    [referral],
+  )
 
   const {
     call: baseCall,
@@ -265,10 +310,10 @@ export default function AssetDashboard() {
 
   const outputAmountComputed = useMemo(() => {
     if (bond.platform === 'AAVE') {
-      return outputAmount
+      return outputAmount && outputAmount.shiftedBy(-bond.decimals)
     } else {
       return outputAmount && exchangeRate && calculatedAsset === bond.address
-        ? outputAmount.times(exchangeRate)
+        ? outputAmount.shiftedBy(-bond.decimals).times(exchangeRate)
         : null
     }
   }, [outputAmount, exchangeRate, calculatedAsset, bond])
@@ -276,29 +321,29 @@ export default function AssetDashboard() {
   const rate = useMemo(
     () =>
       outputAmountComputed && !outputAmountComputed.isZero()
-        ? outputAmountComputed.div(weiAmount).shiftedBy(18)
+        ? outputAmountComputed.div(etherAmount)
         : null,
-    [outputAmountComputed, weiAmount],
+    [outputAmountComputed, etherAmount],
   )
 
   const willEarn = useMemo(
     () =>
       outputAmountComputed && !outputAmountComputed.isZero()
-        ? outputAmountComputed.times(apr).div(1e18)
+        ? outputAmountComputed.times(supplyRate)
         : null,
-    [outputAmountComputed, apr],
+    [outputAmountComputed, supplyRate],
   )
 
   const onMax = useCallback(() => {
     if (etherBalance) {
-      if (isContractWallet) {
+      if (isContractAddress) {
         setEtherAmount(amountFormatter(etherBalance, 18))
       } else {
-        const amount = BigNumber.maximum(0, etherBalance.minus(1e16))
+        const amount = BigNumber.maximum(0, etherBalance.minus(1.0000005e16))
         setEtherAmount(amountFormatter(amount, 18))
       }
     }
-  }, [etherBalance, isContractWallet])
+  }, [etherBalance, isContractAddress])
 
   const onLend = useCallback(() => {
     if (weiAmount) {
@@ -315,14 +360,11 @@ export default function AssetDashboard() {
       <FinancialStatement
         tokenName={bond.asset}
         tokenDecimals={bond.assetDecimals}
-        balance={balanceComputed}
-        profit={profit}
-        earned={earned}
+        balance={balance && balance.toFixed(8)}
+        profit={profit && profit.toFixed(8)}
+        earned={earned && earned.toFixed(8)}
         isBlock={!account}
       />
-      {bond.platform === 'AAVE' && (
-        <SubTitle textAlign='right'>{t('notSupportEarnedInAAVE')}</SubTitle>
-      )}
       <Header>
         <TitleWrapper>
           <Title>{t('lendingNow')}</Title>
@@ -333,7 +375,7 @@ export default function AssetDashboard() {
           </ContextInfo>
         </TitleWrapper>
         <SubTitle>
-          {t('lendingInstruction', { token: bond.asset.toUpperCase() })}
+          {t('lendingInstruction', { token: token.toUpperCase() })}
         </SubTitle>
       </Header>
       {bond.asset !== 'SAI' ? (
@@ -354,9 +396,11 @@ export default function AssetDashboard() {
             tokenPlatform={bond.platform}
             tokenDecimals={bond.assetDecimals}
             account={account}
-            amount={outputAmountComputed}
+            amount={
+              outputAmountComputed ? outputAmountComputed.toFixed(2) : '0.00'
+            }
             exchangeRate={rate}
-            estimatedEarned={willEarn}
+            estimatedEarned={willEarn && willEarn.toFixed(2)}
             error={balanceError}
             isSubmiting={isSending}
             onSubmit={onLend}
@@ -365,7 +409,6 @@ export default function AssetDashboard() {
       ) : (
         <ErrorMessage>{t('saiDisabled')}</ErrorMessage>
       )}
-      {!isDesktopOrLaptop && <Subscribe />}
     </div>
   )
 }

@@ -4,16 +4,18 @@
   "private": true,
   "homepage": "https://easydai-beta.netlify.com",
   "dependencies": {
-    "@terminal-packages/sdk": "^1.1.5",
-    "@walletconnect/browser": "^1.0.0-beta.41",
-    "@walletconnect/qrcode-modal": "^1.0.0-beta.41",
-    "@web3-react/abstract-connector": "^6.0.0-beta.15",
-    "@web3-react/core": "^6.0.0-beta.15",
-    "@web3-react/injected-connector": "^6.0.0-beta.17",
-    "@web3-react/network-connector": "^6.0.0-beta.15",
-    "@web3-react/walletconnect-connector": "^6.0.0-beta.25",
+    "@apollo/client": "^3.0.2",
+    "@walletconnect/client": "^1.1.0",
+    "@walletconnect/qrcode-modal": "^1.1.0",
+    "@web3-react/abstract-connector": "^6.0.7",
+    "@web3-react/core": "^6.1.1",
+    "@web3-react/injected-connector": "^6.0.7",
+    "@web3-react/network-connector": "^6.1.3",
+    "@web3-react/walletconnect-connector": "^6.1.4",
     "bignumber.js": "^9.0.0",
     "ethereumjs-wallet": "^0.6.3",
+    "ethers": "^5.0.7",
+    "graphql": "^15.3.0",
     "history": "^4.10.1",
     "i18next": "^19.0.0",
     "i18next-browser-languagedetector": "^4.0.1",
@@ -32,8 +34,8 @@
     "react-scripts": "^3.3.0",
     "react-simple-animate": "^3.3.6",
     "styled-components": "^4.4.1",
-    "web3": "^2.0.0-alpha.1",
-    "web3-provider-engine": "^15.0.4"
+    "web3-provider-engine": "^15.0.4",
+    "web3-utils": "^1.2.11"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -64,7 +66,12 @@
     "eslint": "^6.7.2",
     "husky": "^3.0.5",
     "prettier": "1.18.2",
-    "pretty-quick": "^1.11.1"
+    "pretty-quick": "^1.11.1",
+    "browserslist": "4.6.2"
+  },
+  "resolutions": {
+    "browserslist": "4.6.2",
+    "caniuse-lite": "1.0.30000974"
   },
   "husky": {
     "hooks": {

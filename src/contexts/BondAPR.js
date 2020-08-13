@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import BigNumber from 'bignumber.js'
 
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { useBlockNumber } from './Application'
 import { useBondDetails, useAllBondDetails } from './Bonds'
 import { safeAccess, isAddress, getContract } from '../utils'
@@ -94,20 +94,17 @@ async function getBondAPR(bond, library) {
   switch (bond.platform) {
     case 'Compound': {
       return getContract(bond.address, bond.abi, library)
-        .methods.supplyRatePerBlock()
-        .call()
+        .supplyRatePerBlock()
         .then(result => new BigNumber(result).times(BLOCKS_PER_YEAR))
     }
     case 'Fulcrum': {
       return getContract(bond.address, bond.abi, library)
-        .methods.supplyInterestRate()
-        .call()
+        .supplyInterestRate()
         .then(result => new BigNumber(result).div(100))
     }
     case 'MakerDAO': {
       return getContract(POT_ADDRESS, POT_ABI, library)
-        .methods.dsr()
-        .call()
+        .dsr()
         .then(result =>
           new BigNumber(result)
             .div(1e27)
@@ -118,8 +115,8 @@ async function getBondAPR(bond, library) {
     }
     case 'AAVE': {
       return getContract(LENDING_POOL_ADDRESS, LENDING_POOL_ABI, library)
-        .methods.getReserveData(bond.reserve)
-        .call()
+        .getReserveData(bond.reserve)
+
         .then(result =>
           new BigNumber(result.liquidityRate).div(1e27).times(1e18),
         )
@@ -131,7 +128,7 @@ async function getBondAPR(bond, library) {
 }
 
 export function useBondAPR(tokenAddress) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const bond = useBondDetails(tokenAddress)
 
@@ -169,7 +166,7 @@ export function useBondAPR(tokenAddress) {
 }
 
 export function useAllBondAPRs() {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const allBonds = useAllBondDetails()
 

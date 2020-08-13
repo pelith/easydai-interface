@@ -114,14 +114,19 @@ export default function CreateTrialWalletForm(props) {
         localStorage.setItem('keystore', keystoreBase64)
         localStorage.setItem('email', email)
 
-        const formData = new FormData()
-        formData.append('email', email)
-        formData.append('keystore', keystoreBase64)
-        formData.append('token', window.gc_token)
-        formData.append('locale', localStorage.getItem('i18nextLng'))
+        const data = {
+          email,
+          keystore: keystoreBase64,
+          token: window.gc_token,
+          locale: localStorage.getItem('i18nextLng'),
+        }
+
         await fetch('https://api.easydai.app/keymail', {
           method: 'POST',
-          body: formData,
+          body: JSON.stringify(data),
+          headers: {
+            'content-type': 'application/json',
+          },
         })
 
         await activate(getNetworkWithSigner(wallet.privateKey))

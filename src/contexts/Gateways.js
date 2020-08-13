@@ -5,12 +5,10 @@ import React, {
   useState,
   useMemo,
 } from 'react'
-import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
 
-import { useWeb3ReadOnly } from '../contexts/Web3ReadOnly'
-import { useGasPrice } from '../hooks/ethereum'
+import { useWeb3React, useGasPrice } from '../hooks/ethereum'
 import { safeAccess, isAddress, getContract } from '../utils'
 import CSAI_GATEWAY_1_ABI from '../constants/abis/cSaiGateway1.json'
 import CSAI_GATEWAY_2_ABI from '../constants/abis/cSaiGateway2.json'
@@ -379,7 +377,7 @@ export default function Provider({ children }) {
 }
 
 export function useGatewaysByTarget(targetAddress, isReferral) {
-  const { chainId } = useWeb3ReadOnly()
+  const { chainId } = useWeb3React()
   const gatewaysContext = useGatewaysContext()
   const gatewaysObject = safeAccess(gatewaysContext, [chainId])
 
@@ -402,24 +400,29 @@ export function useGatewaysByTarget(targetAddress, isReferral) {
 export function useGatewaySwap(targetAddress) {
   const gateways = useGatewaysByTarget(targetAddress, false)
 
-  const { library: libraryReadOnly } = useWeb3ReadOnly()
+  const { library: libraryReadOnly } = useWeb3React()
   const call = useCallback(
     async amount => {
       if (gateways.length) {
         const randomAddress = ethers.Wallet.createRandom().address
         const estimatedAmounts = await Promise.all(
           gateways.map(gateway =>
-            getContract(gateway.address, gateway.abi, libraryReadOnly)
-              .methods[gateway.methodNames[0]](randomAddress)
-              .call({ value: amount }),
+            getContract(
+              gateway.address,
+              gateway.abi,
+              libraryReadOnly,
+            ).callStatic[gateway.methodNames[0]](randomAddress, {
+              value: amount.toString(),
+            }),
           ),
         )
 
         const maxAmount = BigNumber.maximum(
-          ...estimatedAmounts.map(amount => new BigNumber(amount)),
+          ...estimatedAmounts.map(amount => new BigNumber(amount.toString())),
         )
+
         const maxAmountIndex = estimatedAmounts.findIndex(amount =>
-          new BigNumber(amount).eq(maxAmount),
+          new BigNumber(amount.toString()).eq(maxAmount),
         )
 
         return { gatewayNumber: maxAmountIndex + 1, outputAmount: maxAmount }
@@ -441,26 +444,22 @@ export function useGatewaySwap(targetAddress) {
         const gateway = gateways[gatewayNumber - 1]
         const gasPrice = await getPrice()
 
-        library.eth
-          .sendTransaction({
+        try {
+          const signer = await library.getSigner()
+          const tx = await signer.sendTransaction({
             to: gateway.address,
-            from: account,
-            value: amount,
-            gas: gateway.gases.fallback,
-            gasPrice,
+            value: `0x${amount.toString(16)}`,
+            gasLimit: `0x${gateway.gases.fallback.toString(16)}`,
+            gasPrice: `0x${gasPrice.toString(16)}`,
           })
-          .on('transactionHash', () => {
-            setIsSending(true)
-          })
-          .on('confirmation', confirmationNumber => {
-            if (confirmationNumber === 1) {
-              setIsSending(false)
-            }
-          })
-          .on('error', err => {
-            setIsSending(false)
-            setSendError(err)
-          })
+          setIsSending(true)
+          await tx.wait()
+        } catch (err) {
+          console.log(err)
+          setSendError(err.message)
+        } finally {
+          setIsSending(false)
+        }
       }
     },
     [account, gateways, getPrice, library],
@@ -472,7 +471,7 @@ export function useGatewaySwap(targetAddress) {
 export function useReferralGatewaySwap(targetAddress, referralAddress) {
   const gateways = useGatewaysByTarget(targetAddress, true)
 
-  const { library: libraryReadOnly } = useWeb3ReadOnly()
+  const { library: libraryReadOnly } = useWeb3React()
 
   const call = useCallback(
     async amount => {
@@ -486,19 +485,16 @@ export function useReferralGatewaySwap(targetAddress, referralAddress) {
         const randomAddress = ethers.Wallet.createRandom().address
         const estimatedAmounts = await Promise.all(
           gateway.methodNames.map(method =>
-            gatewayContract.methods[method](
-              randomAddress,
-              referralAddress,
-            ).call({
-              value: amount,
+            gatewayContract.callStatic[method](randomAddress, referralAddress, {
+              value: amount.toString(),
             }),
           ),
         )
         const maxAmount = BigNumber.maximum(
-          ...estimatedAmounts.map(amount => new BigNumber(amount)),
+          ...estimatedAmounts.map(amount => new BigNumber(amount.toString())),
         )
         const maxAmountIndex = estimatedAmounts.findIndex(amount =>
-          new BigNumber(amount).eq(maxAmount),
+          new BigNumber(amount.toString()).eq(maxAmount),
         )
 
         return { gatewayNumber: maxAmountIndex + 1, outputAmount: maxAmount }
@@ -526,25 +522,20 @@ export function useReferralGatewaySwap(targetAddress, referralAddress) {
         const method = gateway.methodNames[gatewayNumber - 1]
         const gasPrice = await getPrice()
 
-        gatewayContract.methods[method](account, referralAddress)
-          .send({
+        try {
+          const tx = await gatewayContract[method](account, referralAddress, {
             from: account,
             value: amount,
             gas: gateway.gases[method],
             gasPrice,
           })
-          .on('transactionHash', () => {
-            setIsSending(true)
-          })
-          .on('confirmation', confirmationNumber => {
-            if (confirmationNumber === 1) {
-              setIsSending(false)
-            }
-          })
-          .on('error', err => {
-            setIsSending(false)
-            setSendError(err)
-          })
+          setIsSending(true)
+          await tx.wait()
+        } catch (err) {
+          setSendError(err.message)
+        } finally {
+          setIsSending(false)
+        }
       }
     },
     [account, gateways, getPrice, library, referralAddress],

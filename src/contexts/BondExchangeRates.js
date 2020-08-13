@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import BigNumber from 'bignumber.js'
 
-import { useWeb3ReadOnly } from './Web3ReadOnly'
+import { useWeb3React } from '../hooks/ethereum'
 import { useBlockNumber } from './Application'
 import { useBondDetails, useAllBondDetails } from './Bonds'
 import { safeAccess, isAddress, getContract } from '../utils'
@@ -91,21 +91,18 @@ async function getBondExchangeRate(bond, library) {
   switch (bond.platform) {
     case 'Compound': {
       return getContract(bond.address, bond.abi, library)
-        .methods.exchangeRateCurrent()
-        .call()
-        .then(result => new BigNumber(result).shiftedBy(-18))
+        .callStatic.exchangeRateCurrent()
+        .then(result => new BigNumber(result.toString()).shiftedBy(-18))
     }
     case 'Fulcrum': {
       return getContract(bond.address, bond.abi, library)
-        .methods.tokenPrice()
-        .call()
-        .then(result => new BigNumber(result).shiftedBy(-18))
+        .tokenPrice()
+        .then(result => new BigNumber(result.toString()).shiftedBy(-18))
     }
     case 'MakerDAO': {
       return getContract(POT_ADDRESS, POT_ABI, library)
-        .methods.chi()
-        .call()
-        .then(result => new BigNumber(result).shiftedBy(-27))
+        .chi()
+        .then(result => new BigNumber(result.toString()).shiftedBy(-27))
     }
     default: {
       throw Error(`Unexpected bond plarform: ${bond.platform}`)
@@ -114,7 +111,7 @@ async function getBondExchangeRate(bond, library) {
 }
 
 export function useBondExchangeRate(tokenAddress) {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const bond = useBondDetails(tokenAddress)
 
@@ -127,7 +124,7 @@ export function useBondExchangeRate(tokenAddress) {
     if (
       isAddress(tokenAddress) &&
       (value === undefined || blockNumber !== globalBlockNumber) &&
-      (chainId || chainId === 1)
+      (chainId || chainId === 0)
     ) {
       getBondExchangeRate(bond, library)
         .then(value => {
@@ -152,7 +149,7 @@ export function useBondExchangeRate(tokenAddress) {
 }
 
 export function useAllBondExchangeRates() {
-  const { chainId, library } = useWeb3ReadOnly()
+  const { chainId, library } = useWeb3React()
   const globalBlockNumber = useBlockNumber()
   const allBonds = useAllBondDetails()
 
@@ -170,7 +167,7 @@ export function useAllBondExchangeRates() {
           )
 
           return (newExchangeRates[tokenAddress] = {
-            value: new BigNumber(exchangeRate),
+            value: new BigNumber(exchangeRate.toString()),
             blockNumber: globalBlockNumber,
           })
         }
