@@ -2,7 +2,8 @@ import React, { useCallback, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
-import { useGasPrice, useWeb3React } from '../hooks/ethereum'
+import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
 import { isAddress, getContract, amountFormatter } from '../utils'
 import {
@@ -15,6 +16,7 @@ import {
   CUSDT_ADDRESS,
   CWBTC_ADDRESS,
   CZRX_ADDRESS,
+  NetworkContextName,
 } from '../constants'
 import COMPTROLLER_ABI from '../constants/abis/comptroller.json'
 import CTOKEN_ABI from '../constants/abis/cToken.json'
@@ -161,32 +163,35 @@ async function getCompEarned(account, library) {
           cToken.borrowBalanceStored(account),
           cToken.borrowIndex(),
         ])
-        const supplierComp = new BigNumber(compSupplyState.index)
-          .minus(new BigNumber(compSupplierIndex))
-          .times(new BigNumber(cTokenBalance))
-          .div(1e36)
-        const borrowerComp = new BigNumber(compBorrowState.index)
-          .minus(new BigNumber(compBorrowerIndex))
-          .times(
-            new BigNumber(cTokenBorrowBalance)
-              .times(1e18)
-              .div(new BigNumber(cTokenBorrowIndex)),
-          )
-          .div(1e36)
+        const supplierComp = compSupplyState.index
+          .sub(compSupplierIndex)
+          .mul(cTokenBalance)
+          .div(ethers.constants.WeiPerEther)
+          .div(ethers.constants.WeiPerEther)
 
-        return supplierComp.plus(borrowerComp)
+        const borrowerComp = compBorrowState.index
+          .sub(compBorrowerIndex)
+          .mul(
+            cTokenBorrowBalance
+              .mul(ethers.constants.WeiPerEther)
+              .div(cTokenBorrowIndex),
+          )
+          .div(ethers.constants.WeiPerEther)
+          .div(ethers.constants.WeiPerEther)
+
+        return supplierComp.add(borrowerComp)
       } catch (e) {
         console.log(e)
       }
     }),
   ])
 
-  return BigNumber.sum(...compBalances)
+  return BigNumber.sum(...compBalances.map(b => new BigNumber(b.toString())))
 }
 
 export default function Comp() {
   const { library, account } = useWeb3React()
-  const { library: libraryReadOnly } = useWeb3React()
+  const { library: libraryReadOnly } = useWeb3React(NetworkContextName)
   const { t } = useTranslation()
 
   const [amount, setAmount] = useState()
@@ -212,7 +217,6 @@ export default function Comp() {
 
   const [isPending, setIsPending] = useState(false)
   const [claimError, setClaimError] = useState()
-  const { getPrice } = useGasPrice()
   const onClaim = useCallback(async () => {
     if (account && isAddress(account) && library) {
       const contract = getContract(
@@ -223,17 +227,17 @@ export default function Comp() {
       )
 
       try {
-        const gasPrice = await getPrice()
-        const estimatedGas = await contract.estimateGas.claimComp(account)
-        const tx = await contract.claimComp(account, {
-          gasPrice,
-          gas: estimatedGas,
+        const estimatedGas = await contract.estimateGas['claimComp(address)'](
+          account,
+        )
+        const tx = await contract['claimComp(address)'](account, {
+          gasLimit: estimatedGas,
         })
         setClaimError()
         setIsPending(true)
         await tx.wait()
-      } catch (err) {
-        setClaimError(err.message)
+      } catch {
+        setClaimError()
       } finally {
         setIsPending(false)
       }
@@ -243,7 +247,7 @@ export default function Comp() {
         setIsPending(false)
       }
     }
-  }, [account, getPrice, library])
+  }, [account, library])
 
   const noAccountError = !account && t('noAccountError')
   const error = noAccountError || claimError

@@ -1,4 +1,3 @@
-import * as web3Utils from 'web3-utils'
 import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
 
@@ -36,7 +35,7 @@ export function getReferralAddress(name) {
 }
 
 export function isAddress(address) {
-  return web3Utils.isAddress(address)
+  return ethers.utils.isAddress(address)
 }
 
 export async function isContract(address, library) {
