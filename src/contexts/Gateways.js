@@ -140,7 +140,7 @@ const GATEWAYS_CONTEXTS = {
       [ABI]: CUSDC_GATEWAY_3_ABI,
       [METHOD_NAMES]: ['etherTocUSDC'],
       [GASES]: {
-        fallback: 800000,
+        fallback: 1600000,
       },
     },
     '0x878281852d6658b17cf35daa947b70c156c80d5d': {
